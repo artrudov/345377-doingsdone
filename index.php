@@ -40,7 +40,18 @@ $tasks = [
         'category' => 4,
         'isComplete' => false
     ]
-]
+];
+
+function getCountTasks($tasksArray, $projectName){
+    if ($projectName === 'Все') {
+        return count($tasksArray);
+    } else {
+        return count(array_filter($tasksArray, function($projects, $tasksArray, $projectName) {
+            return $projects[$tasksArray['category']] === $projectName;
+        }));
+    }
+};
+
 ?>
 <!DOCTYPE html>
 <html lang="ru">
@@ -92,7 +103,7 @@ $tasks = [
                             <li class="main-navigation__list-item <?= $index === 0 ? 'main-navigation__list-item--active' : '' ?>">
                                 <a class="main-navigation__list-item-link" href="#">
                                     <?= $project?></a>
-                                <span class="main-navigation__list-item-count">24</span>
+                                <span class="main-navigation__list-item-count"><?= 'getCountTasks($tasks, $project)'?></span>
                             </li>
                        <?php endforeach; ?>
                     </ul>
