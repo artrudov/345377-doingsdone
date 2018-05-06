@@ -2,46 +2,43 @@
 // показывать или нет выполненные задачи
 $show_complete_tasks = rand(0, 1);
 
-$complete = 'Да';
-$notComplete = 'Нет';
-
 $projects = ['Все', 'Входящие', 'Учеба', 'Работа', 'Домашние дела', 'Авто'];
 $tasks = [
     [
         'task' => 'Собеседование в IT компании',
-        'dateComplete' => '01.06.2018',
-        'category' => $projects[3],
-        'isComplete' => $notComplete
+        'deadline' => '01.06.2018',
+        'category' => 3,
+        'isComplete' => false
     ],
     [
         'task' => 'Выполнить тестовое задание',
-        'dateComplete' => '25.05.2018',
-        'category' => $projects[3],
-        'isComplete' => $notComplete
+        'deadline' => '25.05.2018',
+        'category' => 3,
+        'isComplete' => false
     ],
     [
         'task' => 'Сделать задание первого раздела',
-        'dateComplete' => '21.04.2018',
-        'category' => $projects[2],
-        'isComplete' => $complete
+        'deadline' => '21.04.2018',
+        'category' => 2,
+        'isComplete' => true
     ],
     [
         'task' => 'Встреча с другом',
-        'dateComplete' => '	22.04.2018',
-        'category' => $projects[1],
-        'isComplete' => $notComplete
+        'deadline' => '	22.04.2018',
+        'category' => 1,
+        'isComplete' => false
     ],
     [
         'task' => 'Купить корм для кота',
-        'dateComplete' => 'Нет',
-        'category' => $projects[4],
-        'isComplete' => $notComplete
+        'deadline' => 'Нет',
+        'category' => 4,
+        'isComplete' => false
     ],
     [
         'task' => 'Заказать пиццу',
-        'dateComplete' => 'Нет',
-        'category' => $projects[4],
-        'isComplete' => $notComplete
+        'deadline' => 'Нет',
+        'category' => 4,
+        'isComplete' => false
     ]
 ]
 ?>
@@ -91,10 +88,10 @@ $tasks = [
                 <nav class="main-navigation">
                     <ul class="main-navigation__list">
 
-                        <?php foreach($projects as $project): ?>
-                            <li class="main-navigation__list-item <?= $project === $projects[0] ? 'main-navigation__list-item--active' : '' ?>">
+                        <?php foreach($projects as $index => $project): ?>
+                            <li class="main-navigation__list-item <?= $index === 0 ? 'main-navigation__list-item--active' : '' ?>">
                                 <a class="main-navigation__list-item-link" href="#">
-                                    <?php echo "$project"?></a>
+                                    <?= $project?></a>
                                 <span class="main-navigation__list-item-count">24</span>
                             </li>
                        <?php endforeach; ?>
@@ -132,14 +129,14 @@ $tasks = [
 
                 <table class="tasks">
                     <?php foreach($tasks as $task): ?>
-                        <tr class="tasks__item task <?= $task['isComplete'] === $complete ? "task--completed" : '' ?>">
+                        <tr class="tasks__item task <?= $task['isComplete'] ? "task--completed" : '' ?>">
                             <td class="task__select">
                                 <label class="checkbox task__checkbox">
                                     <input class="checkbox__input visually-hidden" type="checkbox" checked>
-                                    <span class="checkbox__text"><?php echo $task['task']?></span>
+                                    <span class="checkbox__text"><?= $task['task']?></span>
                                 </label>
                             </td>
-                            <td class="task__date"><?php echo $task['dateComplete']?></td>
+                            <td class="task__date"><?= $task['deadline']?></td>
 
                             <td class="task__controls"></td>
                         </tr>
