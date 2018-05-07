@@ -46,8 +46,8 @@ function getCountTasks($tasksArray, $projectCategory){
     if ($projectCategory === 0) {
         return count($tasksArray);
     } else {
-        return count(array_filter($tasksArray, function ($task, $projectCategory) {
-            return $task['category'] === $projectCategory;
+        return count(array_filter($tasksArray, function ($item) use ($projectCategory) {
+            return $item['category'] === $projectCategory;
         }));
     }
 };
@@ -104,7 +104,7 @@ function getCountTasks($tasksArray, $projectCategory){
                             <li class="main-navigation__list-item <?= $index === 0 ? 'main-navigation__list-item--active' : '' ?>">
                                 <a class="main-navigation__list-item-link" href="#">
                                     <?= $project?></a>
-                                <span class="main-navigation__list-item-count"></span>
+                                <span class="main-navigation__list-item-count"><?= getCountTasks($tasks, $index)?></span>
                             </li>
                        <?php endforeach; ?>
                     </ul>
