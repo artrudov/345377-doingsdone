@@ -7,7 +7,7 @@ $tasks = [
     [
         'task' => 'Собеседование в IT компании',
         'deadline' => '01.06.2018',
-        'category' => 3,
+        'category' => 2,
         'isComplete' => false
     ],
     [
@@ -42,13 +42,22 @@ $tasks = [
     ]
 ];
 
+function filterTaskArray($task, $projectName) {
+    global $projects;
+    var_dump($projects);
+
+    if ($projects[$task['category']] === $projectName) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 function getCountTasks($tasksArray, $projectName){
     if ($projectName === 'Все') {
         return count($tasksArray);
     } else {
-        return count(array_filter($tasksArray, function($projects, $tasksArray, $projectName) {
-            return $projects[$tasksArray['category']] === $projectName;
-        }));
+        return count(array_filter($tasksArray, 'filterTaskArray'));
     }
 };
 
@@ -103,7 +112,7 @@ function getCountTasks($tasksArray, $projectName){
                             <li class="main-navigation__list-item <?= $index === 0 ? 'main-navigation__list-item--active' : '' ?>">
                                 <a class="main-navigation__list-item-link" href="#">
                                     <?= $project?></a>
-                                <span class="main-navigation__list-item-count"><?= 'getCountTasks($tasks, $project)'?></span>
+                                <span class="main-navigation__list-item-count"><?= getCountTasks($tasks, $project)?></span>
                             </li>
                        <?php endforeach; ?>
                     </ul>
