@@ -61,11 +61,11 @@ $pageContent = renderTemplate('templates/index.php', [
 ]);
 
 $layoutContent = renderTemplate('templates/layout.php', [
-    '$titlePage' => 'Дела в порядке',
+    'titlePage' => 'Дела в порядке',
     'content' => $pageContent,
     'tasks' => $tasks,
-    'getCountTasks' => 'getCountTasks',
-    'projects' => $projects
+    'projects' => $projects,
+    'getCountTasks' => 'getCountTasks'
 ]);
 
 print($layoutContent);

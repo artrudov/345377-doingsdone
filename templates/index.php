@@ -28,10 +28,10 @@
             <td class="task__select">
                 <label class="checkbox task__checkbox">
                     <input class="checkbox__input visually-hidden" type="checkbox" checked>
-                    <span class="checkbox__text"><?= $task['task'] ?></span>
+                    <span class="checkbox__text"><?= strip_tags($task['task'])?></span>
                 </label>
             </td>
-            <td class="task__date"><?= $task['deadline'] ?></td>
+            <td class="task__date"><?= strip_tags($task['deadline'])?></td>
 
             <td class="task__controls"></td>
         </tr>
