@@ -11,3 +11,18 @@ function renderTemplate($templatePath, $data) {
     require($templatePath);
     return ob_get_clean();
 };
+
+function dateCheck($taskDate) {
+    if ($taskDate == 'Нет') {
+        return '';
+    }
+
+    $secInHour = 3600;
+    $hourInDay = 24;
+    $currentTS = time();
+    $taskTS = strtotime($taskDate);
+
+    $differenceHour = ($taskTS - $currentTS) / $secInHour;
+
+    return ($differenceHour < $hourInDay) ? 'task--important' : '';
+};

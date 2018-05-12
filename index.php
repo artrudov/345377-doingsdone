@@ -27,13 +27,13 @@ $tasks = [
     ],
     [
         'task' => 'Встреча с другом',
-        'deadline' => '	22.04.2018',
+        'deadline' => '22.04.2018',
         'category' => 1,
         'isComplete' => false
     ],
     [
         'task' => 'Купить корм для кота',
-        'deadline' => 'Нет',
+        'deadline' => '12.05.2018',
         'category' => 4,
         'isComplete' => false
     ],
@@ -57,7 +57,8 @@ function getCountTasks($tasks, $projectCategory){
 
 $pageContent = renderTemplate('templates/index.php', [
     'show_complete_tasks' => $show_complete_tasks,
-    'tasks' => $tasks
+    'tasks' => $tasks,
+    'dateCheck' => 'dateCheck'
 ]);
 
 $layoutContent = renderTemplate('templates/layout.php', [
