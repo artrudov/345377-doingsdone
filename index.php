@@ -51,7 +51,6 @@ $tasks = [
 $pageContent = renderTemplate('templates/index.php', [
     'show_complete_tasks' => $show_complete_tasks,
     'tasks' => $tasks,
-    'dateCheck' => 'dateCheck'
 ]);
 
 $layoutContent = renderTemplate('templates/layout.php', [
