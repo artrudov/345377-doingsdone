@@ -58,8 +58,7 @@ $layoutContent = renderTemplate('templates/layout.php', [
     'titlePage' => 'Дела в порядке',
     'content' => $pageContent,
     'tasks' => $tasks,
-    'projects' => $projects,
-    'hourInDay' => 24
+    'projects' => $projects
 ]);
 
 print($layoutContent);
