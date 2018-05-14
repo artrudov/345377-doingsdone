@@ -27,10 +27,9 @@ function renderTemplate($templatePath, $data) {
     }
 
     ob_start();
-
     extract($data);
-
     require($templatePath);
+
     return ob_get_clean();
 };
 
@@ -43,17 +42,15 @@ function checkDeadline($taskDate) {
     $currentTS = time();
     $taskTS = strtotime($taskDate);
 
-    return ($taskTS - $currentTS) / SEC_IN_HOUR;
+    return $taskTS - $currentTS;
 };
 
 /**
- * Функция устанавливающая статус "Важно"
+ * Функция проверяет задачу на оставшееся время и приоритет важности
  * @param integer $taskDate дата завершения задачи
  * @param boolean $taskComplete статус выполнения задачи
- * @return string класс html-элемента
+ * @return boolean задача важна или нет
  */
 function compareDate($taskDate, $taskComplete) {
-    $differenceHour = checkDeadline($taskDate);
-
-    return $differenceHour < HOUR_IN_DAY && $taskDate !== 'Нет' && !$taskComplete ? 'task--important' : '';
+    return checkDeadline($taskDate) / HOUR_IN_DAY < HOUR_IN_DAY && $taskDate !== 'Нет' && !$taskComplete;
 }
