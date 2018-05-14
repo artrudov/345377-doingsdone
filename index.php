@@ -2,6 +2,9 @@
 
 require('functions.php');
 
+const SEC_IN_HOUR = 3600;
+const HOUR_IN_DAY = 24;
+
 // показывать или нет выполненные задачи
 $show_complete_tasks = rand(0, 1);
 
@@ -27,13 +30,13 @@ $tasks = [
     ],
     [
         'task' => 'Встреча с другом',
-        'deadline' => '	22.04.2018',
+        'deadline' => '22.04.2018',
         'category' => 1,
         'isComplete' => false
     ],
     [
         'task' => 'Купить корм для кота',
-        'deadline' => 'Нет',
+        'deadline' => '12.05.2018',
         'category' => 4,
         'isComplete' => false
     ],
@@ -45,27 +48,16 @@ $tasks = [
     ]
 ];
 
-function getCountTasks($tasks, $projectCategory){
-    if ($projectCategory === 0) {
-        return count($tasks);
-    }
-
-    return count(array_filter($tasks, function ($task) use ($projectCategory) {
-        return $task['category'] === $projectCategory;
-    }));
-};
-
 $pageContent = renderTemplate('templates/index.php', [
     'show_complete_tasks' => $show_complete_tasks,
-    'tasks' => $tasks
+    'tasks' => $tasks,
 ]);
 
 $layoutContent = renderTemplate('templates/layout.php', [
     'titlePage' => 'Дела в порядке',
     'content' => $pageContent,
     'tasks' => $tasks,
-    'projects' => $projects,
-    'getCountTasks' => 'getCountTasks'
+    'projects' => $projects
 ]);
 
 print($layoutContent);

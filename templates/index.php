@@ -24,7 +24,9 @@
 
 <table class="tasks">
     <?php foreach ($tasks as $task): ?>
-        <tr class="tasks__item task <?= $task['isComplete'] ? "task--completed" : '' ?>">
+        <tr class="tasks__item task
+        <?= compareDate(strip_tags($task['deadline']), $task['isComplete']) ? 'task--important' : ''?>
+        <?= $task['isComplete'] ? 'task--completed' : '' ?>">
             <td class="task__select">
                 <label class="checkbox task__checkbox">
                     <input class="checkbox__input visually-hidden" type="checkbox" checked>
