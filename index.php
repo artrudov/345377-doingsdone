@@ -2,6 +2,9 @@
 
 require('functions.php');
 
+const SEC_IN_HOUR = 3600;
+const HOUR_IN_DAY = 24;
+
 // показывать или нет выполненные задачи
 $show_complete_tasks = rand(0, 1);
 
@@ -45,16 +48,6 @@ $tasks = [
     ]
 ];
 
-function getCountTasks($tasks, $projectCategory){
-    if ($projectCategory === 0) {
-        return count($tasks);
-    }
-
-    return count(array_filter($tasks, function ($task) use ($projectCategory) {
-        return $task['category'] === $projectCategory;
-    }));
-};
-
 $pageContent = renderTemplate('templates/index.php', [
     'show_complete_tasks' => $show_complete_tasks,
     'tasks' => $tasks,
@@ -66,7 +59,7 @@ $layoutContent = renderTemplate('templates/layout.php', [
     'content' => $pageContent,
     'tasks' => $tasks,
     'projects' => $projects,
-    'getCountTasks' => 'getCountTasks'
+    'hourInDay' => 24
 ]);
 
 print($layoutContent);
