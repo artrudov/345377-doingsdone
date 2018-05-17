@@ -8,19 +8,19 @@ SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
 
 -- -----------------------------------------------------
--- Schema CasesInOrder
+-- Schema doings_done
 -- -----------------------------------------------------
 
 -- -----------------------------------------------------
--- Schema CasesInOrder
+-- Schema doings_done
 -- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS `CasesInOrder` DEFAULT CHARACTER SET utf8 ;
-USE `CasesInOrder` ;
+CREATE SCHEMA IF NOT EXISTS `doings_done` DEFAULT CHARACTER SET utf8 ;
+USE `doings_done` ;
 
 -- -----------------------------------------------------
--- Table `CasesInOrder`.`users`
+-- Table `doings_done`.`users`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `CasesInOrder`.`users` (
+CREATE TABLE IF NOT EXISTS `doings_done`.`users` (
   `user_id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `user_name` VARCHAR(65) NOT NULL,
   `user_password` VARCHAR(255) NOT NULL,
@@ -35,9 +35,9 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `CasesInOrder`.`projects`
+-- Table `doings_done`.`projects`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `CasesInOrder`.`projects` (
+CREATE TABLE IF NOT EXISTS `doings_done`.`projects` (
   `project_id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `project_name` VARCHAR(255) NOT NULL,
   `user_id` INT UNSIGNED NOT NULL,
@@ -47,16 +47,16 @@ CREATE TABLE IF NOT EXISTS `CasesInOrder`.`projects` (
   UNIQUE INDEX `project_name_UNIQUE` (`project_name` ASC),
   CONSTRAINT `fk_projects_users1`
     FOREIGN KEY (`user_id`)
-    REFERENCES `CasesInOrder`.`users` (`user_id`)
+    REFERENCES `doings_done`.`users` (`user_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `CasesInOrder`.`tasks`
+-- Table `doings_done`.`tasks`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `CasesInOrder`.`tasks` (
+CREATE TABLE IF NOT EXISTS `doings_done`.`tasks` (
   `task_id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `task_name` VARCHAR(255) NOT NULL,
   `task_create_date` TIMESTAMP NOT NULL,
@@ -72,12 +72,12 @@ CREATE TABLE IF NOT EXISTS `CasesInOrder`.`tasks` (
   INDEX `fk_tasks_users1_idx` (`user_id` ASC),
   CONSTRAINT `fk_tasks_projects1`
     FOREIGN KEY (`project_id`)
-    REFERENCES `CasesInOrder`.`projects` (`project_id`)
+    REFERENCES `doings_done`.`projects` (`project_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_tasks_users1`
     FOREIGN KEY (`user_id`)
-    REFERENCES `CasesInOrder`.`users` (`user_id`)
+    REFERENCES `doings_done`.`users` (`user_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
