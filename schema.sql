@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS `CasesInOrder`.`users` (
   `user_name` VARCHAR(65) NOT NULL,
   `user_password` VARCHAR(255) NOT NULL,
   `user_email` VARCHAR(65) NOT NULL,
-  `user_contacts` INT NULL,
+  `user_contacts` VARCHAR(255) NULL,
   `user_registration` TIMESTAMP NOT NULL,
   PRIMARY KEY (`user_id`),
   UNIQUE INDEX `id_users_UNIQUE` (`user_id` ASC),
