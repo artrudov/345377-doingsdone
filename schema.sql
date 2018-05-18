@@ -8,76 +8,76 @@ SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
 
 -- -----------------------------------------------------
--- Schema CasesInOrder
+-- Schema doings_done
 -- -----------------------------------------------------
 
 -- -----------------------------------------------------
--- Schema CasesInOrder
+-- Schema doings_done
 -- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS `CasesInOrder` DEFAULT CHARACTER SET utf8 ;
-USE `CasesInOrder` ;
+CREATE SCHEMA IF NOT EXISTS `doings_done` DEFAULT CHARACTER SET utf8 ;
+USE `doings_done` ;
 
 -- -----------------------------------------------------
--- Table `CasesInOrder`.`users`
+-- Table `doings_done`.`users`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `CasesInOrder`.`users` (
-  `user_id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `user_name` VARCHAR(65) NOT NULL,
-  `user_password` VARCHAR(255) NOT NULL,
-  `user_email` VARCHAR(65) NOT NULL,
-  `user_contacts` VARCHAR(255) NULL,
-  `user_registration` TIMESTAMP NOT NULL,
-  PRIMARY KEY (`user_id`),
-  UNIQUE INDEX `id_users_UNIQUE` (`user_id` ASC),
-  UNIQUE INDEX `user_email_UNIQUE` (`user_email` ASC),
-  UNIQUE INDEX `user_name_UNIQUE` (`user_name` ASC))
+CREATE TABLE IF NOT EXISTS `doings_done`.`users` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(65) NOT NULL,
+  `password` VARCHAR(255) NOT NULL,
+  `email` VARCHAR(65) NOT NULL,
+  `contacts` VARCHAR(255) NULL,
+  `registration` TIMESTAMP NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC),
+  UNIQUE INDEX `email_UNIQUE` (`email` ASC),
+  UNIQUE INDEX `name_UNIQUE` (`name` ASC))
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `CasesInOrder`.`projects`
+-- Table `doings_done`.`projects`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `CasesInOrder`.`projects` (
-  `project_id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `project_name` VARCHAR(255) NOT NULL,
+CREATE TABLE IF NOT EXISTS `doings_done`.`projects` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(255) NOT NULL,
   `user_id` INT UNSIGNED NOT NULL,
-  PRIMARY KEY (`project_id`, `user_id`),
-  UNIQUE INDEX `project_id_UNIQUE` (`project_id` ASC),
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC),
   INDEX `fk_projects_users1_idx` (`user_id` ASC),
-  UNIQUE INDEX `project_name_UNIQUE` (`project_name` ASC),
+  UNIQUE INDEX `name_UNIQUE` (`name` ASC),
   CONSTRAINT `fk_projects_users1`
     FOREIGN KEY (`user_id`)
-    REFERENCES `CasesInOrder`.`users` (`user_id`)
+    REFERENCES `doings_done`.`users` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `CasesInOrder`.`tasks`
+-- Table `doings_done`.`tasks`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `CasesInOrder`.`tasks` (
-  `task_id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `task_name` VARCHAR(255) NOT NULL,
-  `task_create_date` TIMESTAMP NOT NULL,
-  `task_complete_date` TIMESTAMP NULL,
-  `task_deadline` TIMESTAMP NULL,
-  `task_link_file` VARCHAR(255) NULL,
+CREATE TABLE IF NOT EXISTS `doings_done`.`tasks` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(255) NOT NULL,
+  `create_date` TIMESTAMP NOT NULL,
+  `complete_date` TIMESTAMP NULL,
+  `deadline` TIMESTAMP NULL,
+  `file` VARCHAR(255) NULL,
   `project_id` INT UNSIGNED NOT NULL,
   `user_id` INT UNSIGNED NOT NULL,
-  PRIMARY KEY (`task_id`, `project_id`, `user_id`),
-  UNIQUE INDEX `task_name_UNIQUE` (`task_name` ASC),
-  UNIQUE INDEX `task_id_UNIQUE` (`task_id` ASC),
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `name_UNIQUE` (`name` ASC),
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC),
   INDEX `fk_tasks_projects1_idx` (`project_id` ASC),
   INDEX `fk_tasks_users1_idx` (`user_id` ASC),
   CONSTRAINT `fk_tasks_projects1`
     FOREIGN KEY (`project_id`)
-    REFERENCES `CasesInOrder`.`projects` (`project_id`)
+    REFERENCES `doings_done`.`projects` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_tasks_users1`
     FOREIGN KEY (`user_id`)
-    REFERENCES `CasesInOrder`.`users` (`user_id`)
+    REFERENCES `doings_done`.`users` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
