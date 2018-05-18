@@ -71,12 +71,12 @@ CREATE TABLE IF NOT EXISTS `doings_done`.`tasks` (
   INDEX `fk_tasks_projects1_idx` (`project_id` ASC),
   INDEX `fk_tasks_users1_idx` (`user_id` ASC),
   CONSTRAINT `fk_tasks_projects1`
-    FOREIGN KEY (`id`)
+    FOREIGN KEY (`project_id`)
     REFERENCES `doings_done`.`projects` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_tasks_users1`
-    FOREIGN KEY (`id`)
+    FOREIGN KEY (`user_id`)
     REFERENCES `doings_done`.`users` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
