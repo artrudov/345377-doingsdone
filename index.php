@@ -17,8 +17,14 @@ $getProjectTasks = 'SELECT * FROM tasks WHERE user_id ='. $userID .' AND project
 $getAllTasks = 'SELECT * FROM tasks WHERE user_id = ?';
 
 $projects = getData($db, $getProjects, [$userID]);
-$tasks = $projectID ? getData($db, $getProjectTasks, [$projectID]) : getData($db, $getAllTasks, [$userID]);
+
 $allTasks = getData($db, $getAllTasks, [$userID]);
+
+if ($projectID) {
+    $tasks = getData($db, $getProjectTasks, [$projectID]);
+} else {
+    $tasks = $allTasks;
+}
 
 // показывать или нет выполненные задачи
 $show_complete_tasks = rand(0, 1);
