@@ -11,7 +11,7 @@ function getCountTasks($tasks, $projectCategory){
     }
 
     return count(array_filter($tasks, function ($task) use ($projectCategory) {
-        return $task['category'] === $projectCategory;
+        return $task['project_id'] === $projectCategory;
     }));
 };
 
@@ -54,3 +54,23 @@ function checkDeadline($taskDate) {
 function compareDate($taskDate, $taskComplete) {
     return checkDeadline($taskDate) / HOUR_IN_DAY < HOUR_IN_DAY && $taskDate !== 'Нет' && !$taskComplete;
 }
+
+/**
+ * Функция получения данных из баззы даннх
+ * @param string $sql строка запроза
+ * @param array $condition условие
+ * @return array задача важна или нет
+ */
+function getData($db, $sql, $condition) {
+
+    $resource = mysqli_prepare($db, $sql);
+    $stmt = db_get_prepare_stmt($db, $sql, $condition);
+    mysqli_stmt_execute($stmt);
+
+    $resource = mysqli_stmt_get_result($stmt);
+
+    $result = mysqli_fetch_all($resource, MYSQLI_ASSOC);
+
+    return $result;
+}
+
