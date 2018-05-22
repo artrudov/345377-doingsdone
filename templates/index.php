@@ -25,12 +25,12 @@
 <table class="tasks">
     <?php foreach ($tasks as $task): ?>
         <tr class="tasks__item task
-        <?= compareDate(strip_tags($task['deadline']), $task['isComplete']) ? 'task--important' : ''?>
-        <?= $task['isComplete'] ? 'task--completed' : '' ?>">
+        <?= compareDate(strip_tags($task['deadline']), $task['complete_date']) ? 'task--important' : ''?>
+        <?= $task['complete_date'] ? 'task--completed' : '' ?>">
             <td class="task__select">
                 <label class="checkbox task__checkbox">
                     <input class="checkbox__input visually-hidden" type="checkbox" checked>
-                    <span class="checkbox__text"><?= strip_tags($task['task'])?></span>
+                    <span class="checkbox__text"><?= strip_tags($task['name'])?></span>
                 </label>
             </td>
             <td class="task__date"><?= strip_tags($task['deadline'])?></td>
