@@ -9,7 +9,7 @@ const HOUR_IN_DAY = 24;
 
 $db = new mysqli(DB['server'], DB['username'], DB['password'], DB['db']);
 
-$projectID = $_GET ? intval($_GET['project_id']) : 0;
+$projectID = intval($_GET['project_id'] ?? 0);
 $userID = 1;
 
 $getProjects = 'SELECT * FROM projects WHERE user_id = ?';
@@ -19,7 +19,9 @@ $getAllTasks = 'SELECT * FROM tasks WHERE user_id = ?';
 $projects = getData($db, $getProjects, [$userID]);
 $allTasks = getData($db, $getAllTasks, [$userID]);
 
-if ($projectID && getData($db, $getProjectTasks, [$projectID])) {
+$idProject = in_array($projectID, array_column($allTasks, 'project_id'));
+
+if ($idProject && $idProject !== -1) {
     $tasks = getData($db, $getProjectTasks, [$projectID]);
 } else if (!$projectID) {
     $tasks = $allTasks;
@@ -34,12 +36,13 @@ $show_complete_tasks = rand(0, 1);
 
 $pageContent = renderTemplate('templates/index.php', [
     'show_complete_tasks' => $show_complete_tasks,
-    'tasks' => $tasks ?? '',
+    'tasks' => $tasks ?? [],
 ]);
 
 $layoutContent = renderTemplate('templates/layout.php', [
     'titlePage' => 'Дела в порядке',
-    'content' => $errorMessage ?? $pageContent,
+    'content' => $pageContent,
+    'errorMessage' => $errorMessage ?? '',
     'tasks' => $allTasks,
     'projects' => $projects
 ]);

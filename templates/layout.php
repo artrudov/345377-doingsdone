@@ -52,7 +52,7 @@
 
                         <?php foreach ($projects as $project): ?>
                             <li class="main-navigation__list-item">
-                                <a class="main-navigation__list-item-link" href="/?project_id=<?=$project['id'];?>">
+                                <a class="main-navigation__list-item-link" href="/index.php?project_id=<?=$project['id'];?>">
                                     <?= $project['name'] ?></a>
                                 <span
                                     class="main-navigation__list-item-count"><?= getCountTasks($tasks, $project['id']) ?></span>
@@ -67,6 +67,7 @@
 
             <main class="content__main">
                 <?= $content?>
+                <?= $errorMessage?>
             </main>
         </div>
     </div>
