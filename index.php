@@ -17,13 +17,16 @@ $getProjectTasks = 'SELECT * FROM tasks WHERE user_id ='. $userID .' AND project
 $getAllTasks = 'SELECT * FROM tasks WHERE user_id = ?';
 
 $projects = getData($db, $getProjects, [$userID]);
-
 $allTasks = getData($db, $getAllTasks, [$userID]);
 
-if ($projectID) {
+if ($projectID && getData($db, $getProjectTasks, [$projectID])) {
     $tasks = getData($db, $getProjectTasks, [$projectID]);
-} else {
+} else if (!$projectID) {
     $tasks = $allTasks;
+} else {
+    header('Status: 404, not found');
+    http_response_code(404);
+    $errorMessage = 'Указанной категории нет';
 }
 
 // показывать или нет выполненные задачи
@@ -31,12 +34,12 @@ $show_complete_tasks = rand(0, 1);
 
 $pageContent = renderTemplate('templates/index.php', [
     'show_complete_tasks' => $show_complete_tasks,
-    'tasks' => $tasks,
+    'tasks' => $tasks ?? '',
 ]);
 
 $layoutContent = renderTemplate('templates/layout.php', [
     'titlePage' => 'Дела в порядке',
-    'content' => $pageContent,
+    'content' => $errorMessage ?? $pageContent,
     'tasks' => $allTasks,
     'projects' => $projects
 ]);
