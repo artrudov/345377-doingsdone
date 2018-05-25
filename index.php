@@ -12,16 +12,52 @@ $db = new mysqli(DB['server'], DB['username'], DB['password'], DB['db']);
 $projectID = intval($_GET['project_id'] ?? 0);
 $userID = 1;
 
-$getProjects = 'SELECT * FROM projects WHERE user_id = ?';
-$getProjectTasks = 'SELECT * FROM tasks WHERE user_id ='. $userID .' AND project_id = ?';
-$getAllTasks = 'SELECT * FROM tasks WHERE user_id = ?';
+$getProjects = 'SELECT * FROM `projects` WHERE `user_id` = ?';
+$getProjectTasks = 'SELECT * FROM `tasks` WHERE `user_id` =' . $userID . ' AND `project_id` = ?';
+$getAllTasks = 'SELECT * FROM `tasks` WHERE `user_id` = ?';
+$setNewTask = 'INSERT INTO `tasks` (`name`,`create_date`,`complete_date`,`project_id`,`deadline`,`file`, `user_id` )
+        VALUES (?, NOW(), NULL, ?, ?, ?, ' . $userID . ')';
 
 $projects = getData($db, $getProjects, [$userID]);
 $allTasks = getData($db, $getAllTasks, [$userID]);
 
-$isProject = in_array($projectID, array_column($projects, 'id'));
+$isProject = isProjectExists($projectID, $projects);
 
-if ($isProject && $isProject !== -1) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $newTask = $_POST;
+    $id = intval($newTask['project']);
+    $errors = [];
+
+    if (empty($newTask['name'])) {
+        $errors['name'] = 'Это поле надо заполнить';
+    }
+
+    if (!isProjectExists($id, $projects)) {
+        $errors['project'] = 'Выбраный проект не найден';
+    }
+
+    if ($newTask['date']) {
+        validateDate($newTask['date']) ? $newTask['date'] : $errors['date'] = 'Неверно указан формат времени';
+    } else {
+        $newTask['date'] = 'NULL';
+    }
+
+    if ($_FILES['preview']['size']) {
+        $tmp_name = $_FILES['preview']['tmp_name'];
+        $path = $_FILES['preview']['name'];
+
+        move_uploaded_file($tmp_name, 'uploads/' . $path);
+        $newTask['path'] = $path;
+    } else {
+        $newTask['path'] = 'NULL';
+    }
+
+    if (!count($errors)) {
+        addNewTask($db, $setNewTask, $newTask);
+    }
+}
+
+if ($isProject) {
     $tasks = getData($db, $getProjectTasks, [$projectID]);
 } else if (!$projectID) {
     $tasks = $allTasks;
@@ -39,12 +75,21 @@ $pageContent = renderTemplate('templates/index.php', [
     'tasks' => $tasks ?? [],
 ]);
 
+$modalTask = renderTemplate('templates/modal-task.php', [
+    'projects' => $projects,
+    'newTask' => $newTask ?? [],
+    'errors' => $errors ?? []
+]);
+
 $layoutContent = renderTemplate('templates/layout.php', [
     'titlePage' => 'Дела в порядке',
     'content' => $pageContent,
     'errorMessage' => $errorMessage ?? '',
     'tasks' => $allTasks,
-    'projects' => $projects
+    'projectID' => $projectID,
+    'projects' => $projects,
+    'modalTask' => $modalTask,
+    'errors' => $errors ?? []
 ]);
 
 print($layoutContent);
