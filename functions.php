@@ -56,11 +56,11 @@ function compareDate($taskDate, $taskComplete) {
 }
 
 /**
- * Функция получения данных из базы даннх
+ * Функция получения данных из базы данных
  * @param mysqli $db ресурс базы данны
  * @param string $sql строка запроза
  * @param array $condition условие для подстановки запроса
- * @return array массив с данным
+ * @return array массив с данными
  */
 function getData($db, $sql, $condition) {
 
@@ -74,4 +74,3 @@ function getData($db, $sql, $condition) {
 
     return $result;
 }
-

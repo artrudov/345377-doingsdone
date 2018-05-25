@@ -67,6 +67,7 @@
 
             <main class="content__main">
                 <?= $content?>
+                <?= $errorMessage?>
             </main>
         </div>
     </div>
