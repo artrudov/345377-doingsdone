@@ -19,7 +19,7 @@ $getAllTasks = 'SELECT * FROM tasks WHERE user_id = ?';
 $projects = getData($db, $getProjects, [$userID]);
 $allTasks = getData($db, $getAllTasks, [$userID]);
 
-$isProject = in_array($projectID, array_column($allTasks, 'project_id'));
+$isProject = in_array($projectID, array_column($projects, 'id'));
 
 if ($isProject && $isProject !== -1) {
     $tasks = getData($db, $getProjectTasks, [$projectID]);
