@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if ($newTask['date']) {
-        validateDate($newTask['date']) ? $newTask['date'] : $errors['date'] = 'Неверно указан формат времени';
+        validateDate($newTask['date']) ? $newTask['date'] : $errors['date'] = 'Введите дату и время в формате: ГГГГ-ММ-ДД ЧЧ:ММ';
     } else {
         $newTask['date'] = 'NULL';
     }
@@ -46,8 +46,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $tmp_name = $_FILES['preview']['tmp_name'];
         $path = $_FILES['preview']['name'];
 
-        move_uploaded_file($tmp_name, 'uploads/' . $path);
-        $newTask['path'] = $path;
+        if (!count($errors)) {
+            move_uploaded_file($tmp_name, 'uploads/' . $path);
+            $newTask['path'] = $path;
+        }
     } else {
         $newTask['path'] = 'NULL';
     }
