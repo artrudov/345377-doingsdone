@@ -28,13 +28,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors['email'] = 'Пользователь с таким email уже существует';
     }
 
-    if ($newUser['name'] && getEntries($db, $getUserName, [$newUser['name']])) {
-        $errors['name'] = 'Пользователь с таким именем уже существует';
-    }
-
-    $newUser['password'] = password_hash($newUser['password'], PASSWORD_DEFAULT);
-
     if (!count($errors)) {
+        $newUser['password'] = password_hash($newUser['password'], PASSWORD_DEFAULT);
         if (!addNewEntry($db, $setNewUser, $newUser)) {
             $errors['connect'] = 'Что-то пошло не так, попробуйте еще раз';
         } else {
