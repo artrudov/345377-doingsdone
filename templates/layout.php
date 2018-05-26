@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="css/flatpickr.min.css">
 </head>
 
-<body><!--class="overlay"-->
+<body class="<?= count($errors) ? 'overlay' : ''?>">
 <h1 class="visually-hidden">Дела в порядке</h1>
 
 <div class="page-wrapper">
@@ -44,14 +44,14 @@
                 <nav class="main-navigation">
                     <ul class="main-navigation__list">
 
-                        <li class="main-navigation__list-item main-navigation__list-item--active">
+                        <li class="main-navigation__list-item <?= !$projectID? 'main-navigation__list-item--active' : ''?>">
                             <a class="main-navigation__list-item-link" href="/index.php?project_id=0">Все</a>
                             <span
                                 class="main-navigation__list-item-count"><?= getCountTasks($tasks, 0) ?></span>
                         </li>
 
                         <?php foreach ($projects as $project): ?>
-                            <li class="main-navigation__list-item">
+                            <li class="main-navigation__list-item <?= $projectID === $project['id'] ? 'main-navigation__list-item--active' : ''?>">
                                 <a class="main-navigation__list-item-link" href="/index.php?project_id=<?=$project['id'];?>">
                                     <?= $project['name'] ?></a>
                                 <span
@@ -81,8 +81,7 @@
             <p>Веб-приложение для удобного ведения списка дел.</p>
         </div>
 
-        <a class="main-footer__button button button--plus open-modal" target="task_add"
-           href="javascript:;">Добавить задачу</a>
+        <a class="main-footer__button button button--plus open-modal" target="task_add">Добавить задачу</a>
 
         <div class="main-footer__social social">
             <span class="visually-hidden">Мы в соцсетях:</span>
@@ -129,6 +128,7 @@
     </div>
 </footer>
 
+<?= $modalTask?>
 <script src="flatpickr.js"></script>
 <script src="script.js"></script>
 </body>
