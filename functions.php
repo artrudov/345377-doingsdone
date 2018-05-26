@@ -16,8 +16,6 @@ function getCountTasks($tasks, $projectCategory)
     }));
 }
 
-;
-
 /**
  * Функция отрисовки шаблона с данными
  * @param string $templatePath относительный путь к шаблону, например templates/index.php
@@ -37,8 +35,6 @@ function renderTemplate($templatePath, $data)
     return ob_get_clean();
 }
 
-;
-
 /**
  * Функция подсчета часов
  * @param string $taskDate дата завершения задачи
@@ -51,8 +47,6 @@ function checkDeadline($taskDate)
 
     return $taskTS - $currentTS;
 }
-
-;
 
 /**
  * Функция проверяет задачу на оставшееся время и приоритет важности
@@ -74,7 +68,6 @@ function compareDate($taskDate, $taskComplete)
  */
 function getData($db, $sql, $condition)
 {
-
     $resource = mysqli_prepare($db, $sql);
     $stmt = db_get_prepare_stmt($db, $sql, $condition);
     mysqli_stmt_execute($stmt);
@@ -87,21 +80,38 @@ function getData($db, $sql, $condition)
 }
 
 /**
- * Функция добавления новой задачи
+ * Функция проверки наличия запрашиваемых данных в базе
+ * @param mysqli $db ресурс базы данных
+ * @param string $sql строка запроза
+ * @param array $condition условие для подстановки запроса
+ * @return integer возвращает количество записей в базе
+ */
+function getEntries($db, $sql, $condition)
+{
+    $resource = mysqli_prepare($db, $sql);
+    $stmt = db_get_prepare_stmt($db, $sql, $condition);
+    mysqli_stmt_execute($stmt);
+    $resource = mysqli_stmt_get_result($stmt);
+
+    $result = mysqli_fetch_all($resource, MYSQLI_ASSOC);
+
+    return $result['0']['COUNT(*)'];
+}
+
+/**
+ * Функция добавления новой записи в базу данных
  * @param mysqli $db ресурс базы данных
  * @param string $sql строка запроза
  * @param array $formsData данные из формы
  * @return boolean результат добавления задачи в базу данных
  */
-function addNewTask($db, $sql, $formsData)
+function addNewEntry($db, $sql, $formsData)
 {
     $resource = mysqli_prepare($db, $sql);
     $stmt = db_get_prepare_stmt($db, $sql, $formsData);
     $result = mysqli_stmt_execute($stmt);
     return $result;
 }
-
-;
 
 /**
  * Функция проверки id проекта
@@ -112,7 +122,6 @@ function addNewTask($db, $sql, $formsData)
 function isProjectExists($id, $projects)
 {
     $isProject = in_array($id, array_column($projects, 'id'));
-
     return $isProject && $isProject !== -1 ? true : false;
 }
 
@@ -128,4 +137,3 @@ function validateDate($date, $format = "Y-m-d H:i")
     return $receivedDate && $receivedDate->format($format) == $date;
 }
 
-;

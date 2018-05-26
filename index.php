@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (!count($errors)) {
-        addNewTask($db, $setNewTask, $newTask);
+        addNewEntry($db, $setNewTask, $newTask);
     }
 }
 

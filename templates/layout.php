@@ -20,8 +20,7 @@
             </a>
 
             <div class="main-header__side">
-                <a class="main-header__side-item button button--plus open-modal" href="javascript:;"
-                   target="task_add">Добавить задачу</a>
+                <a class="main-header__side-item button button--plus open-modal" target="task_add">Добавить задачу</a>
 
                 <div class="main-header__side-item user-menu">
                     <div class="user-menu__image">
