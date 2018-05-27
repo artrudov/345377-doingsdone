@@ -2,10 +2,12 @@
 
 session_start();
 
-if (!isset($_SESSION['user'][0])) {
+if (!isset($_SESSION['user'])) {
     header("Location: /guest.php");
     exit();
 }
+
+var_dump($_SESSION);
 
 require('functions.php');
 require('db-config.php');
@@ -16,7 +18,7 @@ const HOUR_IN_DAY = 24;
 
 $db = new mysqli(DB['server'], DB['username'], DB['password'], DB['db']);
 $projectID = intval($_GET['project_id'] ?? 0);
-$user = $_SESSION['user'][0];
+$user = $_SESSION['user'];
 $userID = $user['id'];
 $userName = $user['name'];
 
@@ -31,7 +33,7 @@ $allTasks = getData($db, $getAllTasks, [$userID]);
 
 $isProject = isProjectExists($projectID, $projects);
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['project'])) {
     $newTask = $_POST;
     $id = intval($newTask['project']);
     $errors = [];
@@ -87,6 +89,11 @@ $pageContent = renderTemplate('templates/index.php', [
     'tasks' => $tasks ?? [],
 ]);
 
+$modalProject = renderTemplate('templates/modal-project.php', [
+    'newTask' => $newTask ?? [],
+    'errors' => $errors ?? []
+]);
+
 $modalTask = renderTemplate('templates/modal-task.php', [
     'projects' => $projects,
     'newTask' => $newTask ?? [],
@@ -102,6 +109,7 @@ $layoutContent = renderTemplate('templates/layout.php', [
     'projectID' => $projectID,
     'projects' => $projects,
     'modalTask' => $modalTask,
+    'modalProject' => $modalProject,
     'errors' => $errors ?? [],
     'userName' => $userName
 ]);

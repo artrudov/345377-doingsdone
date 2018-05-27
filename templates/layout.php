@@ -40,8 +40,7 @@
                     </ul>
                 </nav>
 
-                <a class="button button--transparent button--plus content__side-button open-modal"
-                   href="javascript:;" target="project_add">Добавить проект</a>
+                <a class="button button--transparent button--plus content__side-button open-modal" target="project_add">Добавить проект</a>
             </section>
 
             <main class="content__main">
@@ -106,7 +105,7 @@
         </div>
     </div>
 </footer>
-
+<?= $modalProject?>
 <?= $modalTask?>
 <script src="flatpickr.js"></script>
 <script src="script.js"></script>

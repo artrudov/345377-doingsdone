@@ -9,7 +9,7 @@ $getUser = 'SELECT * FROM `users` WHERE `email` = ?';
 
 session_start();
 
-if (isset($_SESSION['user'][0])) {
+if (isset($_SESSION['user'])) {
     header("Location: /index.php");
     exit();
 }
@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'  ) {
         $user = getData($db, $getUser, [$logInForm['email']]);
         if ($user) {
             if (password_verify($logInForm['password'], $user[0]['password'])) {
-                $_SESSION['user'] = $user;
+                $_SESSION['user'] = $user[0];
                 header("Location: /index.php");
                 exit();
             } else {
