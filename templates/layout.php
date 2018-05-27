@@ -3,18 +3,18 @@
 
 <head>
     <meta charset="UTF-8">
-    <title><?= $titlePage?></title>
+    <title><?= $titlePage ?></title>
     <link rel="stylesheet" href="css/normalize.css">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/flatpickr.min.css">
 </head>
 
-<body class="<?= count($errors) ? 'overlay' : ''?>">
+<body class="<?= count($errors) ? 'overlay' : '' ?>">
 <h1 class="visually-hidden">Дела в порядке</h1>
 
 <div class="page-wrapper">
     <div class="container container--with-sidebar">
-        <?= $pageHeader?>
+        <?= $pageHeader ?>
 
         <div class="content">
             <section class="content__side">
@@ -23,15 +23,16 @@
                 <nav class="main-navigation">
                     <ul class="main-navigation__list">
 
-                        <li class="main-navigation__list-item <?= !$projectID? 'main-navigation__list-item--active' : ''?>">
-                            <a class="main-navigation__list-item-link" href="/index.php?project_id=0">Все</a>
+                        <li class="main-navigation__list-item <?= !$projectID ? 'main-navigation__list-item--active' : '' ?>">
+                            <a class="main-navigation__list-item-link" href="/">Все</a>
                             <span
                                 class="main-navigation__list-item-count"><?= getCountTasks($tasks, 0) ?></span>
                         </li>
 
                         <?php foreach ($projects as $project): ?>
-                            <li class="main-navigation__list-item <?= $projectID === $project['id'] ? 'main-navigation__list-item--active' : ''?>">
-                                <a class="main-navigation__list-item-link" href="/index.php?project_id=<?=$project['id'];?>">
+                            <li class="main-navigation__list-item <?= $projectID === $project['id'] ? 'main-navigation__list-item--active' : '' ?>">
+                                <a class="main-navigation__list-item-link"
+                                   href="/index.php?project_id=<?= $project['id']; ?>">
                                     <?= $project['name'] ?></a>
                                 <span
                                     class="main-navigation__list-item-count"><?= getCountTasks($tasks, $project['id']) ?></span>
@@ -40,12 +41,13 @@
                     </ul>
                 </nav>
 
-                <a class="button button--transparent button--plus content__side-button open-modal" target="project_add">Добавить проект</a>
+                <a class="button button--transparent button--plus content__side-button open-modal" target="project_add">Добавить
+                    проект</a>
             </section>
 
             <main class="content__main">
-                <?= $content?>
-                <?= $errorMessage?>
+                <?= $content ?>
+                <?= $errorMessage ?>
             </main>
         </div>
     </div>
@@ -105,8 +107,8 @@
         </div>
     </div>
 </footer>
-<?= $modalProject?>
-<?= $modalTask?>
+<?= $modalProject ?>
+<?= $modalTask ?>
 <script src="flatpickr.js"></script>
 <script src="script.js"></script>
 </body>

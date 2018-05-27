@@ -114,6 +114,21 @@ function addNewEntry($db, $sql, $formsData)
 }
 
 /**
+ * Функция обновления записи в базу данных
+ * @param mysqli $db ресурс базы данных
+ * @param string $sql строка запроза
+ * @param array $formsData данные из формы
+ * @return boolean результат добавления задачи в базу данных
+ */
+function updateEntry($db, $sql, $formsData)
+{
+    $resource = mysqli_prepare($db, $sql);
+    $stmt = db_get_prepare_stmt($db, $sql, $formsData);
+    $result = mysqli_stmt_execute($stmt);
+    return $result;
+}
+
+/**
  * Функция проверки id проекта
  * @param integer $id искомый идентификатор
  * @param array $projects массив проектов

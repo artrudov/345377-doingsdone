@@ -10,10 +10,10 @@ INSERT INTO `users` (`name`,`password`,`email`,`contacts`,`registration`) VALUES
 -- -----------------------------------------------------
 INSERT INTO `projects` (`name`,`user_id`) VALUES
 ('Входящие',1),
-('Учеба', 2),
+('Учеба', 1),
 ('Работа', 1),
-('Домашние дела', 2),
-('Авто', 1);
+('Домашние дела', 1),
+('Авто', 2);
 
 -- -----------------------------------------------------
 --  Insert data `CasesInOrder`.`tasks`
@@ -23,8 +23,8 @@ INSERT INTO `tasks` (`name`,`create_date`,`complete_date`,`deadline`,`file`,`pro
 ('Выполнить тестовое задание',CURRENT_TIMESTAMP(),NULL,TIMESTAMP(STR_TO_DATE('25.05.2018 00:00', '%d.%c.%Y %H:%i')),NULL,3,1),
 ('Сделать задание первого раздела',CURRENT_TIMESTAMP(),NULL,TIMESTAMP(STR_TO_DATE('25.05.2018 00:00', '%d.%c.%Y %H:%i')),NULL,2,1),
 ('Встреча с другом',CURRENT_TIMESTAMP(),NULL,TIMESTAMP(STR_TO_DATE('25.05.2018 00:00', '%d.%c.%Y %H:%i')),NULL,1,1),
-('Купить корм для кота',CURRENT_TIMESTAMP(),NULL,TIMESTAMP(STR_TO_DATE('18.05.2018 00:00', '%d.%c.%Y %H:%i')),NULL,4,2),
-('Заказать пиццу',CURRENT_TIMESTAMP(),NULL,NULL,NULL,4,2);
+('Купить корм для кота',CURRENT_TIMESTAMP(),NULL,TIMESTAMP(STR_TO_DATE('18.05.2018 00:00', '%d.%c.%Y %H:%i')),NULL,4,1),
+('Заказать пиццу',CURRENT_TIMESTAMP(),NULL,NULL,NULL,4,1);
 
 -- -----------------------------------------------------
 --  Получить список из всех проектов для одного пользователя;
