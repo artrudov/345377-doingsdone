@@ -1,5 +1,12 @@
 <?php
 
+session_start();
+
+if (!isset($_SESSION['user'][0])) {
+    header("Location: /guest.php");
+    exit();
+}
+
 require('functions.php');
 require('db-config.php');
 require('mysql_helper.php');
@@ -8,9 +15,10 @@ const SEC_IN_HOUR = 3600;
 const HOUR_IN_DAY = 24;
 
 $db = new mysqli(DB['server'], DB['username'], DB['password'], DB['db']);
-
 $projectID = intval($_GET['project_id'] ?? 0);
-$userID = 1;
+$user = $_SESSION['user'][0];
+$userID = $user['id'];
+$userName = $user['name'];
 
 $getProjects = 'SELECT * FROM `projects` WHERE `user_id` = ?';
 $getProjectTasks = 'SELECT * FROM `tasks` WHERE `user_id` =' . $userID . ' AND `project_id` = ?';
@@ -91,7 +99,8 @@ $layoutContent = renderTemplate('templates/layout.php', [
     'projectID' => $projectID,
     'projects' => $projects,
     'modalTask' => $modalTask,
-    'errors' => $errors ?? []
+    'errors' => $errors ?? [],
+    'userName' => $userName
 ]);
 
 print($layoutContent);
