@@ -1,6 +1,6 @@
 <?php
 session_start();
-unset($_SESSION['user'][0]);
+unset($_SESSION['user']);
 
 header('Location: /guest.php');
 exit();
