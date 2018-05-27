@@ -3,35 +3,38 @@ require('functions.php');
 require('db-config.php');
 require('mysql_helper.php');
 
+session_start();
+
 $db = new mysqli(DB['server'], DB['username'], DB['password'], DB['db']);
 $getUserName = 'SELECT COUNT(*) FROM `users` WHERE `name` = ?';
 $getUserEmail = 'SELECT COUNT(*) FROM `users` WHERE `email` = ?';
 $setNewUser = 'INSERT INTO `users` (`email`,`password`,`name`,`contacts`,`registration`) VALUES (?, ?, ?, NULL, NOW())';
+$getUser = 'SELECT * FROM `users` WHERE `email` = ?';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registration-form'])) {
     $newUser = $_POST;
-    $errors = [];
+    $errorsRegistration = [];
 
     if (!filter_var($newUser['email'], FILTER_VALIDATE_EMAIL)) {
-        $errors['email'] = empty($newUser['email']) ? 'Это поле надо заполнить' : 'Введите корректный E-mail';
+        $errorsRegistration['email'] = empty($newUser['email']) ? 'Это поле надо заполнить' : 'Введите корректный E-mail';
     }
 
     if (empty($newUser['password'])) {
-        $errors['password'] = 'Это поле надо заполнить';
+        $errorsRegistration['password'] = 'Это поле надо заполнить';
     }
 
     if (empty($newUser['name'])) {
-        $errors['name'] = 'Это поле надо заполнить';
+        $errorsRegistration['name'] = 'Это поле надо заполнить';
     }
 
     if ($newUser['email'] && getEntries($db, $getUserEmail, [$newUser['email']])) {
-        $errors['email'] = 'Пользователь с таким email уже существует';
+        $errorsRegistration['email'] = 'Пользователь с таким email уже существует';
     }
 
-    if (!count($errors)) {
+    if (!count($errorsRegistration)) {
         $newUser['password'] = password_hash($newUser['password'], PASSWORD_DEFAULT);
         if (!addNewEntry($db, $setNewUser, $newUser)) {
-            $errors['connect'] = 'Что-то пошло не так, попробуйте еще раз';
+            $errorsRegistration['connect'] = 'Что-то пошло не так, попробуйте еще раз';
         } else {
             header("Location: /index.php");
             exit();
@@ -39,10 +42,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
+    $logInForm = $_POST;
+    $errorsLogin = [];
+
+    if (empty($logInForm['password'])) {
+        $errorsLogin['password'] = 'Это поле надо заполнить';
+    }
+
+    if (!filter_var($logInForm['email'], FILTER_VALIDATE_EMAIL)) {
+        $errorsLogin['email'] = empty($logInForm['email']) ? 'Это поле надо заполнить' : 'Введите корректный E-mail';
+    }
+
+    if (!count($errorsLogin)) {
+        $user = getData($db, $getUser, [$logInForm['email']]);
+        if ($user) {
+            if (password_verify($logInForm['password'], $user[0]['password'])) {
+                $_SESSION['user'] = $user[0];
+                header("Location: /index.php");
+                exit();
+            } else {
+                $errorsLogin['password'] = 'Неверный пароль';
+            }
+        } else {
+            $errorsLogin['email'] = 'Пользователь с таким именем не найден';
+        }
+    }
+}
+
+$modalAuthorization = renderTemplate('templates/modal-authorization.php', [
+    'user' => $user ?? [],
+    'errors' => $errorsLogin ?? [],
+    'logInForm' => $logInForm ?? []
+]);
+
 $layoutContent = renderTemplate('templates/register.php', [
     'titlePage' => 'Дела в порядке | Регистрация',
+    'modalAuthorization' => $modalAuthorization,
     'newUser' => $newUser ?? [],
-    'errors' => $errors ?? []
+    'errors' => $errorsRegistration ?? [],
+    'errorsLogin' => $errorsLogin ?? []
 ]);
 
 print($layoutContent);

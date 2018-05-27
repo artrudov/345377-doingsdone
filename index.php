@@ -7,8 +7,6 @@ if (!isset($_SESSION['user'])) {
     exit();
 }
 
-var_dump($_SESSION);
-
 require('functions.php');
 require('db-config.php');
 require('mysql_helper.php');

@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="../css/style.css">
 </head>
 
-<body>
+<body class="<?= count($errorsLogin) ? 'overlay' : ''?>">
 <h1 class="visually-hidden">Дела в порядке</h1>
 
 <div class="page-wrapper">
@@ -23,7 +23,7 @@
             <section class="content__side">
                 <p class="content__side-info">Если у вас уже есть аккаунт, авторизуйтесь на сайте</p>
 
-                <a class="button button--transparent content__side-button" href="#">Войти</a>
+                <a class="button button--transparent content__side-button open-modal" target="user_login">Войти</a>
             </section>
 
             <main class="content__main">
@@ -65,7 +65,7 @@
                     <div class="form__row form__row--controls">
                         <p class="error-message"><?= count($errors) ? 'Пожалуйста, исправьте ошибки в форме' : '' ?></p>
 
-                        <input class="button" type="submit" name="register" value="Зарегистрироваться">
+                        <input class="button" type="submit" name="registration-form" value="Зарегистрироваться">
                     </div>
                 </form>
             </main>
@@ -126,5 +126,9 @@
         </div>
     </div>
 </footer>
+
+<?= $modalAuthorization?>
+<script src="flatpickr.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
