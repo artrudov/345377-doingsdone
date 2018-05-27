@@ -14,6 +14,7 @@ $getUser = 'SELECT * FROM `users` WHERE `email` = ?';
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registration-form'])) {
     $newUser = $_POST;
     $errorsRegistration = [];
+    array_pop($newUser);
 
     if (!filter_var($newUser['email'], FILTER_VALIDATE_EMAIL)) {
         $errorsRegistration['email'] = empty($newUser['email']) ? 'Это поле надо заполнить' : 'Введите корректный E-mail';
@@ -45,6 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registration-form']))
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
     $logInForm = $_POST;
     $errorsLogin = [];
+    array_pop($logInForm);
 
     if (empty($logInForm['password'])) {
         $errorsLogin['password'] = 'Это поле надо заполнить';
