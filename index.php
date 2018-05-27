@@ -80,6 +80,8 @@ if ($isProject) {
 // показывать или нет выполненные задачи
 $show_complete_tasks = rand(0, 1);
 
+$pageHeader = renderTemplate('templates/header.php', ['userName' => $userName]);
+
 $pageContent = renderTemplate('templates/index.php', [
     'show_complete_tasks' => $show_complete_tasks,
     'tasks' => $tasks ?? [],
@@ -93,6 +95,7 @@ $modalTask = renderTemplate('templates/modal-task.php', [
 
 $layoutContent = renderTemplate('templates/layout.php', [
     'titlePage' => 'Дела в порядке',
+    'pageHeader' => $pageHeader,
     'content' => $pageContent,
     'errorMessage' => $errorMessage ?? '',
     'tasks' => $allTasks,

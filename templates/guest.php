@@ -13,15 +13,7 @@
 
 <div class="page-wrapper">
     <div class="container">
-        <header class="main-header">
-            <a href="/">
-                <img src="../img/logo.png" width="153" height="42" alt="Логитип Дела в порядке">
-            </a>
-
-            <div class="main-header__side">
-                <a class="main-header__side-item button button--transparent open-modal" target="user_login">Войти</a>
-            </div>
-        </header>
+        <?= $pageHeader?>
 
         <div class="content">
             <section class="welcome">
