@@ -33,7 +33,7 @@
         <div class="form__row">
             <label class="form__label" for="date">Срок выполнения</label>
 
-            <input class="form__input form__input--date" type="text" name="project-date" id="date"
+            <input class="form__input form__input--date" type="text" name="date" id="date"
                    placeholder="Введите дату и время" value="<?= isset($newTask['date']) ? $newTask['date'] : '' ?>">
 
             <p class="form__message">
@@ -59,7 +59,7 @@
         </p>
 
         <div class="form__row form__row--controls">
-            <input class="button" type="submit" name="project-task" value="Добавить">
+            <input class="button" type="submit" name="task-form" value="Добавить">
         </div>
     </form>
 </div>

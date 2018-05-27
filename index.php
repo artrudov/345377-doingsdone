@@ -25,27 +25,24 @@ $getProjectTasks = 'SELECT * FROM `tasks` WHERE `user_id` =' . $userID . ' AND `
 $getAllTasks = 'SELECT * FROM `tasks` WHERE `user_id` = ?';
 $setNewTask = 'INSERT INTO `tasks` (`name`,`create_date`,`complete_date`,`project_id`,`deadline`,`file`, `user_id` )
         VALUES (?, NOW(), NULL, ?, ?, ?, ' . $userID . ')';
+$setNewProject = 'INSERT INTO `projects` (`name`, `user_id` )
+        VALUES (?, '. $userID .')';
 
-$projects = getData($db, $getProjects, [$userID]);
-$allTasks = getData($db, $getAllTasks, [$userID]);
-
-$isProject = isProjectExists($projectID, $projects);
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['project'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['task-form'])) {
     $newTask = $_POST;
     $id = intval($newTask['project']);
-    $errors = [];
+    $errorsTask = [];
 
     if (empty($newTask['name'])) {
-        $errors['name'] = 'Это поле надо заполнить';
+        $errorsTask['name'] = 'Это поле надо заполнить';
     }
 
-    if (!isProjectExists($id, $projects)) {
-        $errors['project'] = 'Выбраный проект не найден';
+    if (!isProjectExists($id, getData($db, $getProjects, [$userID]))) {
+        $errorsTask['project'] = 'Выбраный проект не найден';
     }
 
     if ($newTask['date']) {
-        validateDate($newTask['date']) ? $newTask['date'] : $errors['date'] = 'Введите дату и время в формате: ГГГГ-ММ-ДД ЧЧ:ММ';
+        validateDate($newTask['date']) ? $newTask['date'] : $errorsTask['date'] = 'Введите дату и время в формате: ГГГГ-ММ-ДД ЧЧ:ММ';
     } else {
         $newTask['date'] = 'NULL';
     }
@@ -54,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['project'])) {
         $tmp_name = $_FILES['preview']['tmp_name'];
         $path = $_FILES['preview']['name'];
 
-        if (!count($errors)) {
+        if (!count($errorsTask)) {
             move_uploaded_file($tmp_name, 'uploads/' . $path);
             $newTask['path'] = $path;
         }
@@ -62,10 +59,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['project'])) {
         $newTask['path'] = 'NULL';
     }
 
-    if (!count($errors)) {
+    if (!count($errorsTask)) {
+        array_pop($newTask);
         addNewEntry($db, $setNewTask, $newTask);
+        unset($newTask);
     }
 }
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['project-form'])) {
+    $newProject = $_POST;
+    $errorsProject = [];
+
+    if (empty($newProject['name'])) {
+        $errorsProject['name'] = 'Это поле надо заполнить';
+    }
+
+    if (!count($errorsProject)) {
+        array_pop($newProject);
+        addNewEntry($db, $setNewProject, $newProject);
+        unset($newProject);
+    }
+}
+
+$projects = getData($db, $getProjects, [$userID]);
+$allTasks = getData($db, $getAllTasks, [$userID]);
+
+$isProject = isProjectExists($projectID, $projects);
 
 if ($isProject) {
     $tasks = getData($db, $getProjectTasks, [$projectID]);
@@ -89,13 +108,13 @@ $pageContent = renderTemplate('templates/index.php', [
 
 $modalProject = renderTemplate('templates/modal-project.php', [
     'newTask' => $newTask ?? [],
-    'errors' => $errors ?? []
+    'errors' => $errorsTask ?? []
 ]);
 
 $modalTask = renderTemplate('templates/modal-task.php', [
     'projects' => $projects,
     'newTask' => $newTask ?? [],
-    'errors' => $errors ?? []
+    'errors' => $errorsTask ?? []
 ]);
 
 $layoutContent = renderTemplate('templates/layout.php', [
@@ -108,7 +127,7 @@ $layoutContent = renderTemplate('templates/layout.php', [
     'projects' => $projects,
     'modalTask' => $modalTask,
     'modalProject' => $modalProject,
-    'errors' => $errors ?? [],
+    'errors' => $errorsTask ?? [],
     'userName' => $userName
 ]);
 
