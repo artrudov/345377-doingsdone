@@ -28,35 +28,36 @@
 
             <main class="content__main">
                 <h2 class="content__main-heading">Регистрация аккаунта</h2>
-                <p class="error-message"><?= $errors['connect'] ?? '' ?></p>
+                <p class="error-message"><?= isset($errors['connect']) ? $errors['connect'] : '' ?></p>
 
                 <form class="form" action="register.php" method="post">
 
                     <div class="form__row">
                         <label class="form__label" for="email">E-mail <sup>*</sup></label>
 
-                        <input class="form__input <?= $errors['email'] ? 'form__input--error' : '' ?>" type="text"
-                               name="email" id="email" value="<?= $newUser['email'] ?? '' ?>"
+                        <input class="form__input <?= isset($errors['email']) ? 'form__input--error' : '' ?>" type="text"
+                               name="email" id="email" value="<?= isset($newUser['email']) ? $newUser['email'] : '' ?>"
                                placeholder="Введите e-mail">
 
-                        <p class="form__message"><?= $errors['email'] ?? '' ?></p>
+                        <p class="form__message"><?= isset($errors['email']) ? $errors['email'] : '' ?></p>
                     </div>
 
                     <div class="form__row">
                         <label class="form__label" for="password">Пароль <sup>*</sup></label>
 
-                        <input class="form__input <?= $errors['password'] ? 'form__input--error' : '' ?>"
+                        <input class="form__input <?= isset($errors['password']) ? 'form__input--error' : '' ?>"
                                type="password" name="password" id="password" value="" placeholder="Введите пароль">
 
-                        <p class="form__message"><?= $errors['password'] ?? '' ?></p>
+                        <p class="form__message"><?= isset($errors['password']) ? $errors['password'] : '' ?></p>
                     </div>
 
                     <div class="form__row">
                         <label class="form__label" for="name">Имя <sup>*</sup></label>
 
-                        <input class="form__input <?= $errors['name'] ? 'form__input--error' : '' ?>" type="text"
-                               name="name" id="name" value="<?= $newUser['name'] ?? '' ?>" placeholder="Введите имя">
-                        <p class="form__message"><?= $errors['name'] ?? '' ?></p>
+                        <input class="form__input <?= isset($errors['name']) ? 'form__input--error' : '' ?>" type="text"
+                               name="name" id="name" value="<?= isset($newUser['name']) ? $newUser['name'] : '' ?>"
+                               placeholder="Введите имя">
+                        <p class="form__message"><?= isset($errors['name']) ? $errors['name'] : '' ?></p>
 
                     </div>
 
