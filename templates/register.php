@@ -65,7 +65,7 @@
                     <div class="form__row form__row--controls">
                         <p class="error-message"><?= count($errors) ? 'Пожалуйста, исправьте ошибки в форме' : '' ?></p>
 
-                        <input class="button" type="submit" name="" value="Зарегистрироваться">
+                        <input class="button" type="submit" name="register" value="Зарегистрироваться">
                     </div>
                 </form>
             </main>
