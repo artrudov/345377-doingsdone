@@ -30,7 +30,7 @@ $getProjects = 'SELECT * FROM `projects` WHERE `user_id` = ?';
 $getProjectTasks = 'SELECT * FROM `tasks` WHERE `user_id` =' . $userID . ' AND `project_id` = ?';
 $getAllTasks = 'SELECT *  FROM `tasks` WHERE `user_id` = ?';
 
-$getTodayTask = 'SELECT * FROM `tasks` WHERE `deadline` > DATE_SUB(NOW(), INTERVAL 1 DAY ) AND project_id = ?';
+$getTodayTask = 'SELECT * FROM `tasks` WHERE `deadline` < DATE_ADD(NOW(), INTERVAL 1 DAY ) AND project_id = ?';
 $getTomorrowTask = 'SELECT * FROM `tasks` WHERE (`deadline` > DATE_ADD(NOW(), INTERVAL 1 DAY) AND `deadline` < DATE_ADD(DATE_ADD(NOW(), INTERVAL 1 DAY), INTERVAL 1 DAY)) AND project_id = ?';
 $getOverdueTask = 'SELECT * FROM `tasks` WHERE (`deadline` < NOW() OR NOT `complete_date`) AND  project_id = ?';
 
