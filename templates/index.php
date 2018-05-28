@@ -9,13 +9,15 @@
 <div class="tasks-controls">
     <nav class="tasks-switch">
         <a href="/<?= $projectID ? 'index.php?project_id=' . $projectID . '&' : '?' ?>filter=all"
-           class="tasks-switch__item tasks-switch__item--active">Все задачи</a>
+           class="tasks-switch__item <?= $filterTask === 'all' || $filterTask === 0 ? 'tasks-switch__item--active' : '' ?>">Все
+            задачи</a>
         <a href="/<?= $projectID ? 'index.php?project_id=' . $projectID . '&' : '?' ?>filter=today"
-           class="tasks-switch__item">Повестка дня</a>
+           class="tasks-switch__item <?= $filterTask === 'today' ? 'tasks-switch__item--active' : '' ?>">Повестка
+            дня</a>
         <a href="/<?= $projectID ? 'index.php?project_id=' . $projectID . '&' : '?' ?>filter=tomorrow"
-           class="tasks-switch__item">Завтра</a>
+           class="tasks-switch__item <?= $filterTask === 'tomorrow' ? 'tasks-switch__item--active' : '' ?>">Завтра</a>
         <a href="/<?= $projectID ? 'index.php?project_id=' . $projectID . '&' : '?' ?>filter=overdue"
-           class="tasks-switch__item">Просроченные</a>
+           class="tasks-switch__item <?= $filterTask === 'overdue' ? 'tasks-switch__item--active' : '' ?>">Просроченные</a>
     </nav>
 
     <label class="checkbox">
@@ -39,12 +41,11 @@
                     </td>
 
                     <td class="task__file">
-                        <a class="download-link"
-                           href="<?= isset($task['file']) !== NULL ? $task['file'] : '' ?>"><?= isset($task['file']) !== NULL ? $task['file'] : '' ?></a>
-                    </td>
+                        <? if ($task['file'] !== 'NULL'): ?>
+                            <a class="download-link"
+                               href="/uploads/<?= $task['file'] ?>"><?= $task['file']?></a>
+                        <? endif; ?>                    </td>
                     <td class="task__date"><?= strip_tags($task['deadline']) ?></td>
-
-                    <td class="task__controls"></td>
                 </tr>
             <? endif; ?>
         <? else: ?>
@@ -58,12 +59,12 @@
                 </td>
 
                 <td class="task__file">
+                    <? if ($task['file'] !== 'NULL'): ?>
                     <a class="download-link"
-                       href="<?= isset($task['file']) !== NULL ? $task['file'] : '' ?>"><?= isset($task['file']) !== NULL ? $task['file'] : '' ?></a>
+                       href="/uploads/<?= $task['file'] ?>"><?= $task['file']?></a>
+                    <? endif; ?>
                 </td>
-                <td class="task__date"><?= strip_tags($task['deadline']) ?></td>
-
-                <td class="task__controls"></td>
+                <td class="task__date"><?= date("d-m-Y", strtotime($task['deadline']))?></td>
             </tr>
         <? endif; ?>
     <? endforeach; ?>

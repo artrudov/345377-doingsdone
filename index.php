@@ -16,8 +16,8 @@ const HOUR_IN_DAY = 24;
 
 $db = new mysqli(DB['server'], DB['username'], DB['password'], DB['db']);
 
-$projectID = isset($_GET['project_id']) ? intval($_GET['project_id']) : 0;
-$filterTask = isset($_GET['filter']) ? $_GET['filter'] : 0;
+$projectID = isset($_GET['project_id']) ? intval($_GET['project_id']) : false;
+$filterTask = isset($_GET['filter']) ? $_GET['filter'] : false;
 $completeTaskID = isset($_GET['task_id']) ? intval($_GET['task_id']) : 0;
 $checkTask = isset($_GET['check']) ? intval($_GET['check']) : 0;
 $show_complete_tasks = isset($_GET['show_completed']) ? $_GET['show_completed'] : 0;
@@ -28,9 +28,9 @@ $userName = $user['name'];
 
 $getProjects = 'SELECT * FROM `projects` WHERE `user_id` = ?';
 $getProjectTasks = 'SELECT * FROM `tasks` WHERE `user_id` =' . $userID . ' AND `project_id` = ?';
-$getAllTasks = 'SELECT * FROM `tasks` WHERE `user_id` = ?';
+$getAllTasks = 'SELECT *  FROM `tasks` WHERE `user_id` = ?';
 
-$getTodayTask = 'SELECT * FROM `tasks` WHERE `deadline` < DATE_SUB(NOW(), INTERVAL 1 DAY ) AND project_id = ?';
+$getTodayTask = 'SELECT * FROM `tasks` WHERE `deadline` > DATE_SUB(NOW(), INTERVAL 1 DAY ) AND project_id = ?';
 $getTomorrowTask = 'SELECT * FROM `tasks` WHERE (`deadline` > DATE_ADD(NOW(), INTERVAL 1 DAY) AND `deadline` < DATE_ADD(DATE_ADD(NOW(), INTERVAL 1 DAY), INTERVAL 1 DAY)) AND project_id = ?';
 $getOverdueTask = 'SELECT * FROM `tasks` WHERE (`deadline` < NOW() OR NOT `complete_date`) AND  project_id = ?';
 
@@ -121,26 +121,35 @@ if ($isProject) {
     $errorMessage = 'Указанной категории нет';
 }
 
-if ($filterTask === 'today') {
-    $tasks = getData($db, $getTodayTask, [$projectID]);
-} else if ($filterTask === 'tomorrow') {
-    $tasks = getData($db, $getTomorrowTask, [$projectID]);
-} else if ($filterTask === 'overdue') {
-    $tasks = getData($db, $getOverdueTask, [$projectID]);
-}
-
-if ($filterTask === 'today' && !$projectID) {
-    $tasks = getData($db, $getAllTodayTask, []);
-} else if ($filterTask === 'tomorrow' && !$projectID) {
-    $tasks = getData($db, $getAllTomorrowTask, []);
-} else if ($filterTask === 'overdue' && !$projectID) {
-    $tasks = getData($db, $getAllOverdueTask, []);
+switch ($filterTask) {
+    case 'today':
+        if ($projectID !== false) {
+            $tasks = getData($db, $getTodayTask, [$projectID]);
+        } else if (!$projectID) {
+            $tasks = getData($db, $getAllTodayTask, []);
+        }
+        break;
+    case 'tomorrow':
+        if (!$projectID) {
+            $tasks = getData($db, $getAllTomorrowTask, []);
+        } else {
+            $tasks = getData($db, $getTomorrowTask, [$projectID]);
+        }
+        break;
+    case 'overdue':
+        if (!$projectID) {
+            $tasks = getData($db, $getAllOverdueTask, []);
+        } else {
+            $tasks = getData($db, $getOverdueTask, [$projectID]);
+        }
+        break;
 }
 
 $pageHeader = renderTemplate('templates/header.php', ['userName' => $userName]);
 
 $pageContent = renderTemplate('templates/index.php', [
     'show_complete_tasks' => $show_complete_tasks,
+    'filterTask' => $filterTask,
     'projectID' => $projectID,
     'tasks' => $tasks ?? [],
 ]);
