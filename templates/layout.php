@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="css/flatpickr.min.css">
 </head>
 
-<body class="<?= count($errors) ? 'overlay' : '' ?>">
+<body class="<?= count($errorsProject) || count($errorsTask) ? 'overlay' : '' ?>">
 <h1 class="visually-hidden">Дела в порядке</h1>
 
 <div class="page-wrapper">
@@ -26,7 +26,7 @@
                         <li class="main-navigation__list-item <?= !$projectID ? 'main-navigation__list-item--active' : '' ?>">
                             <a class="main-navigation__list-item-link" href="/">Все</a>
                             <span
-                                class="main-navigation__list-item-count"><?= getCountTasks($tasks, 0) ?></span>
+                                class="main-navigation__list-item-count"><?= getTasks($tasks, 0) ?></span>
                         </li>
 
                         <?php foreach ($projects as $project): ?>
@@ -35,7 +35,7 @@
                                    href="/index.php?project_id=<?= $project['id']; ?>">
                                     <?= $project['name'] ?></a>
                                 <span
-                                    class="main-navigation__list-item-count"><?= getCountTasks($tasks, $project['id']) ?></span>
+                                    class="main-navigation__list-item-count"><?= getTasks($tasks, $project['id']) ?></span>
                             </li>
                         <?php endforeach; ?>
                     </ul>

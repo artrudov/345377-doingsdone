@@ -1,4 +1,4 @@
-<div class="modal" id="task_add" <?= count($errors) ? '' : 'hidden' ?>>
+<div class="modal" id="task_add" <?= count($errorsTask) ? : 'hidden' ?>>
     <button class="modal__close" type="button" name="button">Закрыть</button>
 
     <h2 class="modal__heading">Добавление задачи</h2>
@@ -7,18 +7,18 @@
         <div class="form__row">
             <label class="form__label" for="name">Название <sup>*</sup></label>
 
-            <input class="form__input <?= $errors['name'] ? 'form__input--error' : '' ?>" type="text" name="name"
+            <input class="form__input <?= $errorsTask['name'] ? 'form__input--error' : '' ?>" type="text" name="name"
                    id="name" value="<?= isset($newTask['name']) ? $newTask['name'] : '' ?>"
                    placeholder="Введите название">
             <p class="form__message">
-                <?= isset($errors['name']) ? $errors['name'] : '' ?>
+                <?= isset($errorsTask['name']) ? $errorsTask['name'] : '' ?>
             </p>
         </div>
 
         <div class="form__row">
             <label class="form__label" for="project">Проект <sup>*</sup></label>
 
-            <select class="form__input form__input--select <?= $errors['project'] ? 'form__input--error' : '' ?>"
+            <select class="form__input form__input--select <?= $errorsTask['project'] ? 'form__input--error' : '' ?>"
                     name="project" id="project">
                 <? foreach ($projects as $project): ?>
                     <option value="<?= $project['id'] ?>">
@@ -26,7 +26,7 @@
                 <? endforeach; ?>
             </select>
             <p class="form__message">
-                <?= isset($errors['project']) ? $errors['project'] : '' ?>
+                <?= isset($errorsTask['project']) ? $errorsTask['project'] : '' ?>
             </p>
         </div>
 
@@ -37,7 +37,7 @@
                    placeholder="Введите дату и время" value="<?= isset($newTask['date']) ? $newTask['date'] : '' ?>">
 
             <p class="form__message">
-                <?= isset($errors['date']) ? $errors['date'] : '' ?>
+                <?= isset($errorsTask['date']) ? $errorsTask['date'] : '' ?>
             </p>
         </div>
 
@@ -55,7 +55,7 @@
         </div>
 
         <p class="form__message">
-            <?= count($errors) ? 'Пожалуйста, исправьте ошибки в форме' : '' ?>
+            <?= count($errorsTask) ? 'Пожалуйста, исправьте ошибки в форме' : '' ?>
         </p>
 
         <div class="form__row form__row--controls">

@@ -41,7 +41,7 @@
                     </td>
 
                     <td class="task__file">
-                        <? if ($task['file'] !== 'NULL'): ?>
+                        <? if ($task['file'] !== ''): ?>
                             <a class="download-link"
                                href="/uploads/<?= $task['file'] ?>"><?= $task['file'] ?></a>
                         <? endif; ?>                    </td>
@@ -50,7 +50,7 @@
             <? endif; ?>
         <? else: ?>
             <tr class="tasks__item task
-        <?= compareDate(strip_tags($task['deadline']), $task['complete_date']) ? 'task--important' : '' ?>">
+        <?= compareDate($task['deadline'], $task['complete_date']) ? 'task--important' : '' ?>">
                 <td class="task__select">
                     <label class="checkbox task__checkbox">
                         <input class="checkbox__input visually-hidden" type="checkbox" value="<?= $task['id'] ?>">
@@ -59,7 +59,7 @@
                 </td>
 
                 <td class="task__file">
-                    <? if ($task['file'] !== 'NULL'): ?>
+                    <? if ($task['file'] !== ''): ?>
                         <a class="download-link"
                            href="/uploads/<?= $task['file'] ?>"><?= $task['file'] ?></a>
                     <? endif; ?>

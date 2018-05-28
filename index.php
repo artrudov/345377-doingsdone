@@ -12,15 +12,12 @@ const HOUR_IN_DAY = 24;
 const DATA_FORMAT = 'Y-m-d H-i';
 
 require('functions.php');
-require('db-config.php');
 require('mysql_helper.php');
 
-$db = new mysqli(DB['server'], DB['username'], DB['password'], DB['db']);
+$db = connect();
 
 if(isset($_GET)) {
-    $stripGet = array_map(function ($item) {
-        return strip_tags($item);
-    }, $_GET);
+    $stripGet = array_map('strip_tags', $_GET);
 }
 
 $projectID = isset($stripGet['project_id']) ? intval($stripGet['project_id']) : 0;
@@ -34,20 +31,20 @@ $userID = $user['id'];
 $userName = $user['name'];
 
 $getProjects = 'SELECT * FROM `projects` WHERE `user_id` = ?';
-$getProjectTasks = 'SELECT * FROM `tasks` WHERE `user_id` =' . $userID . ' AND `project_id` = ?';
+$getProjectTasks = 'SELECT * FROM `tasks` WHERE `user_id` = ? AND `project_id` = ?';
 $getAllTasks = 'SELECT *  FROM `tasks` WHERE `user_id` = ?';
-$setNewProject = 'INSERT INTO `projects` (`name`, `user_id` ) VALUES (?, ' . $userID . ')';
+$setNewProject = 'INSERT INTO `projects` (`name`, `user_id` ) VALUES (?, ?)';
 
 if ($completeTaskID) {
     setCompleteDate($db, $checkTask, $completeTaskID);
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['task-form'])) {
-    $newTask = array_map(function ($item) {return strip_tags($item);}, $_POST);
+    $newTask = array_map('strip_tags', $_POST);
+    unset($newTask['task-form']);
+
     $id = intval($newTask['project']);
     $errorsTask = [];
-
-    var_dump($newTask);
 
     if (empty($newTask['name'])) {
         $errorsTask['name'] = 'Это поле надо заполнить';
@@ -58,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['task-form'])) {
     }
 
     if ($newTask['date']) {
-        validateDate($newTask['date']) ? $newTask['date'] : $errorsTask['date'] = 'Введите дату и время в формате: ГГГГ-ММ-ДД ЧЧ:ММ';
+        validateDate($newTask['date']) ? : $errorsTask['date'] = 'Введите дату и время в формате: ГГГГ-ММ-ДД ЧЧ:ММ';
     } else {
         $newTask['date'] = 'NULL';
     }
@@ -69,22 +66,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['task-form'])) {
 
         if (!count($errorsTask)) {
             move_uploaded_file($tmp_name, 'uploads/' . $path);
-            array_pop($newTask);
             $newTask['path'] = $path;
         }
     } else {
-        array_pop($newTask);
         $newTask['path'] = '';
     }
 
     if (!count($errorsTask)) {
-        addNewTask($db, $userID, $newTask);
+        $newTask['user'] = $userID;
+        addNewTask($db, $newTask);
         unset($newTask);
     }
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['project-form'])) {
-    $newProject = array_map(function ($item) {return strip_tags($item);}, $_POST);
+    $newProject = array_map('strip_tags', $_POST);
+    unset($newProject['project-form']);
     $errorsProject = [];
 
     if (empty($newProject['name'])) {
@@ -92,7 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['project-form'])) {
     }
 
     if (!count($errorsProject)) {
-        array_pop($newProject);
+        $newProject['userID'] = $userID;
         executeQuery($db, $setNewProject, $newProject);
         unset($newProject);
     }
@@ -104,7 +101,7 @@ $allTasks = getData($db, $getAllTasks, [$userID]);
 $isProject = isProjectExists($projectID, $projects);
 
 if ($isProject) {
-    $tasks = getData($db, $getProjectTasks, [$projectID]);
+    $tasks = getData($db, $getProjectTasks, [$userID, $projectID]);
 } else if (!$projectID) {
     $tasks = $allTasks;
 } else {
@@ -114,7 +111,7 @@ if ($isProject) {
 }
 
 if ($filterTask) {
-    $tasks = getFilterDate($db, $projectID, $userID, $filterTask);
+    $tasks = getFilterData($db, $projectID, $userID, $filterTask);
 }
 
 $pageHeader = renderTemplate('templates/header.php', ['userName' => $userName]);
@@ -128,13 +125,13 @@ $pageContent = renderTemplate('templates/index.php', [
 
 $modalProject = renderTemplate('templates/modal-project.php', [
     'newTask' => $newTask ?? [],
-    'errors' => $errorsTask ?? []
+    'errorsProject' => $errorsProject ?? []
 ]);
 
 $modalTask = renderTemplate('templates/modal-task.php', [
     'projects' => $projects,
     'newTask' => $newTask ?? [],
-    'errors' => $errorsTask ?? []
+    'errorsTask' => $errorsTask ?? []
 ]);
 
 $layoutContent = renderTemplate('templates/layout.php', [
@@ -147,7 +144,8 @@ $layoutContent = renderTemplate('templates/layout.php', [
     'projects' => $projects,
     'modalTask' => $modalTask,
     'modalProject' => $modalProject,
-    'errors' => $errorsTask ?? [],
+    'errorsTask' => $errorsTask ?? [],
+    'errorsProject' => $errorsProject ?? [],
     'userName' => $userName
 ]);
 

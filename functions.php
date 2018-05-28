@@ -1,11 +1,25 @@
 <?php
+
+require('db-config.php');
+
+/**
+ * Функция подключения к базе данных
+ * @return mysqli ресурс подключения
+ */
+function connect()
+{
+    $db = new mysqli(DB['server'], DB['username'], DB['password'], DB['db']);
+    mysqli_set_charset($db, DB['charset']);
+    return $db;
+}
+
 /**
  * Функция подсчета задач
  * @param string $projectCategory название проекта
  * @param array $tasks список всех задач в виде массива
  * @return integer число задач для переданного проекта
  */
-function getCountTasks($tasks, $projectCategory)
+function getTasks($tasks, $projectCategory)
 {
     if ($projectCategory === 0) {
         return count($tasks);
@@ -54,9 +68,24 @@ function checkDeadline($taskDate)
  * @param boolean $taskComplete статус выполнения задачи
  * @return boolean задача важна или нет
  */
+
 function compareDate($taskDate, $taskComplete)
 {
     return (checkDeadline($taskDate) / HOUR_IN_DAY < HOUR_IN_DAY) && $taskDate !== 'NULL' && !$taskComplete;
+}
+
+/**
+ * Функция выполнения запроса
+ * @param mysqli $db ресурс базы данных
+ * @param string $sql строка запроза
+ * @param array $formsData данные из формы
+ * @return mysqli_stmt результат добавления задачи в базу данных
+ */
+function executeQuery($db, $sql, $formsData)
+{
+    $stmt = db_get_prepare_stmt($db, $sql, $formsData);
+    mysqli_stmt_execute($stmt);
+    return $stmt;
 }
 
 /**
@@ -68,12 +97,7 @@ function compareDate($taskDate, $taskComplete)
  */
 function getData($db, $sql, $condition)
 {
-    $resource = mysqli_prepare($db, $sql);
-    $stmt = db_get_prepare_stmt($db, $sql, $condition);
-    mysqli_stmt_execute($stmt);
-
-    $resource = mysqli_stmt_get_result($stmt);
-
+    $resource = mysqli_stmt_get_result(executeQuery($db, $sql, $condition));
     $result = mysqli_fetch_all($resource, MYSQLI_ASSOC);
 
     return $result;
@@ -87,7 +111,7 @@ function getData($db, $sql, $condition)
  * @param integer $filterTask условие фильтрации
  * @return array массив с данными
  */
-function getFilterDate($db, $projectID, $userID, $filterTask)
+function getFilterData($db, $projectID, $userID, $filterTask)
 {
     $sql = '';
     $condition = [];
@@ -107,19 +131,19 @@ function getFilterDate($db, $projectID, $userID, $filterTask)
             break;
         case 'today':
             if ($projectID) {
-                $sql = 'SELECT * FROM `tasks` WHERE `deadline` BETWEEN "'.$today->format(DATA_FORMAT).'" AND "'.$todayMidnight->format(DATA_FORMAT).'" AND project_id = ?';
+                $sql = 'SELECT * FROM `tasks` WHERE `deadline` BETWEEN "' . $today->format(DATA_FORMAT) . '" AND "' . $todayMidnight->format(DATA_FORMAT) . '" AND project_id = ?';
                 $condition = $projectID;
             } else {
-                $sql = 'SELECT * FROM `tasks` WHERE `deadline` BETWEEN "'.$today->format(DATA_FORMAT).'" AND "'.$todayMidnight->format(DATA_FORMAT).'" AND user_id = ?';
+                $sql = 'SELECT * FROM `tasks` WHERE `deadline` BETWEEN "' . $today->format(DATA_FORMAT) . '" AND "' . $todayMidnight->format(DATA_FORMAT) . '" AND user_id = ?';
                 $condition = $userID;
             }
             break;
         case 'tomorrow':
             if ($projectID) {
-                $sql = 'SELECT * FROM `tasks` WHERE `deadline` BETWEEN "'.$todayMidnight->format(DATA_FORMAT).'" AND "'.$tomorrowMidnight->format(DATA_FORMAT).'" AND project_id = ?';
+                $sql = 'SELECT * FROM `tasks` WHERE `deadline` BETWEEN "' . $todayMidnight->format(DATA_FORMAT) . '" AND "' . $tomorrowMidnight->format(DATA_FORMAT) . '" AND project_id = ?';
                 $condition = $projectID;
             } else {
-                $sql = 'SELECT * FROM `tasks` WHERE `deadline` BETWEEN "'.$todayMidnight->format(DATA_FORMAT).'" AND "'.$tomorrowMidnight->format(DATA_FORMAT).'" AND `user_id` = ?';
+                $sql = 'SELECT * FROM `tasks` WHERE `deadline` BETWEEN "' . $todayMidnight->format(DATA_FORMAT) . '" AND "' . $tomorrowMidnight->format(DATA_FORMAT) . '" AND `user_id` = ?';
                 $condition = $userID;
             }
             break;
@@ -145,45 +169,24 @@ function getFilterDate($db, $projectID, $userID, $filterTask)
  * @param array $condition условие для подстановки запроса
  * @return integer возвращает количество записей в базе
  */
-function getEntries($db, $sql, $condition)
+function isEntriesExist($db, $sql, $condition)
 {
-    $resource = mysqli_prepare($db, $sql);
-    $stmt = db_get_prepare_stmt($db, $sql, $condition);
-    mysqli_stmt_execute($stmt);
-    $resource = mysqli_stmt_get_result($stmt);
-
+    $resource = mysqli_stmt_get_result(executeQuery($db, $sql, $condition));
     $result = mysqli_fetch_all($resource, MYSQLI_ASSOC);
 
     return $result['0']['COUNT(*)'];
 }
 
 /**
- * Функция выполнения запроса
- * @param mysqli $db ресурс базы данных
- * @param string $sql строка запроза
- * @param array $formsData данные из формы
- * @return boolean результат добавления задачи в базу данных
- */
-function executeQuery($db, $sql, $formsData)
-{
-    $resource = mysqli_prepare($db, $sql);
-    $stmt = db_get_prepare_stmt($db, $sql, $formsData);
-    $result = mysqli_stmt_execute($stmt);
-    return $result;
-}
-
-/**
  * Функция добавления новой задачи у активного пользователя
  * @param mysqli $db ресурс базы данных
- * @param integer $userID идентификатор пользователя
  * @param array $formsData данные из формы
- * @return boolean результат добавления задачи в базу данных
+ * @return mysqli_stmt результат добавления задачи в базу данных
  */
-function addNewTask($db, $userID, $formsData)
+function addNewTask($db, $formsData)
 {
     $sql = 'INSERT INTO `tasks` (`name`,`create_date`,`complete_date`,`project_id`,`deadline`,`file`, `user_id` )
-        VALUES (?, NOW(), NULL, ?, ?, ?, ' . $userID . ')';
-
+        VALUES (?, NOW(), NULL, ?, ?, ?, ?)';
     return executeQuery($db, $sql, $formsData);
 }
 
@@ -192,7 +195,7 @@ function addNewTask($db, $userID, $formsData)
  * @param mysqli $db ресурс базы данных
  * @param integer $checkTask текущий статус задачи
  * @param integer $taskID идентификатор задачи
- * @return boolean результат добавления задачи в базу данных
+ * @return mysqli_stmt результат добавления задачи в базу данных
  */
 function setCompleteDate($db, $checkTask, $taskID)
 {

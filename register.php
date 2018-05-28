@@ -1,20 +1,20 @@
 <?php
 require('functions.php');
-require('db-config.php');
 require('mysql_helper.php');
 
 session_start();
 
-$db = new mysqli(DB['server'], DB['username'], DB['password'], DB['db']);
+$db = connect();
+
 $getUserName = 'SELECT COUNT(*) FROM `users` WHERE `name` = ?';
 $getUserEmail = 'SELECT COUNT(*) FROM `users` WHERE `email` = ?';
 $setNewUser = 'INSERT INTO `users` (`email`,`password`,`name`,`contacts`,`registration`) VALUES (?, ?, ?, NULL, NOW())';
 $getUser = 'SELECT * FROM `users` WHERE `email` = ?';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registration-form'])) {
-    $newUser = array_map(function ($item) {return strip_tags($item);}, $_POST);
+    $newUser = array_map('strip_tags', $_POST);
     $errorsRegistration = [];
-    array_pop($newUser);
+    unset($newUser['registration-form']);
 
     if (!filter_var($newUser['email'], FILTER_VALIDATE_EMAIL)) {
         $errorsRegistration['email'] = empty($newUser['email']) ? 'Это поле надо заполнить' : 'Введите корректный E-mail';
@@ -28,13 +28,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registration-form']))
         $errorsRegistration['name'] = 'Это поле надо заполнить';
     }
 
-    if ($newUser['email'] && getEntries($db, $getUserEmail, [$newUser['email']])) {
+    if ($newUser['email'] && isEntriesExist($db, $getUserEmail, [$newUser['email']])) {
         $errorsRegistration['email'] = 'Пользователь с таким email уже существует';
     }
 
     if (!count($errorsRegistration)) {
         $newUser['password'] = password_hash($newUser['password'], PASSWORD_DEFAULT);
-        if (!addNewEntry($db, $setNewUser, $newUser)) {
+        if (executeQuery($db, $setNewUser, $newUser)->error) {
             $errorsRegistration['connect'] = 'Что-то пошло не так, попробуйте еще раз';
         } else {
             header("Location: /index.php");
@@ -44,9 +44,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registration-form']))
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
-    $logInForm = array_map(function ($item) {return strip_tags($item);}, $_POST);
+    $logInForm = array_map('strip_tags', $_POST);
     $errorsLogin = [];
-    array_pop($logInForm);
+    unset($logInForm['login']);
 
     if (empty($logInForm['password'])) {
         $errorsLogin['password'] = 'Это поле надо заполнить';

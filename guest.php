@@ -1,10 +1,10 @@
 <?php
 
 require('functions.php');
-require('db-config.php');
 require('mysql_helper.php');
 
-$db = new mysqli(DB['server'], DB['username'], DB['password'], DB['db']);
+$db = connect();
+
 $getUser = 'SELECT * FROM `users` WHERE `email` = ?';
 
 session_start();
@@ -14,8 +14,8 @@ if (isset($_SESSION['user'])) {
     exit();
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST'  ) {
-    $logInForm = array_map(function ($item) {return strip_tags($item);}, $_POST);
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $logInForm = array_map('strip_tags', $_POST);
     $errors = [];
 
     if (empty($logInForm['password'])) {
