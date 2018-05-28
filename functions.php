@@ -56,7 +56,7 @@ function checkDeadline($taskDate)
  */
 function compareDate($taskDate, $taskComplete)
 {
-    return checkDeadline($taskDate) / HOUR_IN_DAY < HOUR_IN_DAY && $taskDate !== 'NULL' && !$taskComplete;
+    return (checkDeadline($taskDate) / HOUR_IN_DAY < HOUR_IN_DAY) && $taskDate !== 'NULL' && !$taskComplete;
 }
 
 /**
@@ -91,6 +91,10 @@ function getFilterDate($db, $projectID, $userID, $filterTask)
 {
     $sql = '';
     $condition = [];
+    $today = date_create('today');
+    $todayMidnight = date_create('tomorrow');
+    $tomorrowMidnight = date_create('2 day midnight');
+
     switch ($filterTask) {
         case 'all':
             if ($projectID) {
@@ -103,19 +107,19 @@ function getFilterDate($db, $projectID, $userID, $filterTask)
             break;
         case 'today':
             if ($projectID) {
-                $sql = 'SELECT * FROM `tasks` WHERE `deadline` < DATE_ADD(NOW(), INTERVAL 1 DAY ) AND project_id = ?';
+                $sql = 'SELECT * FROM `tasks` WHERE `deadline` BETWEEN "'.$today->format(DATA_FORMAT).'" AND "'.$todayMidnight->format(DATA_FORMAT).'" AND project_id = ?';
                 $condition = $projectID;
             } else {
-                $sql = 'SELECT * FROM `tasks` WHERE `deadline` < DATE_ADD(NOW(), INTERVAL 1 DAY ) AND user_id = ?';
+                $sql = 'SELECT * FROM `tasks` WHERE `deadline` BETWEEN "'.$today->format(DATA_FORMAT).'" AND "'.$todayMidnight->format(DATA_FORMAT).'" AND user_id = ?';
                 $condition = $userID;
             }
             break;
         case 'tomorrow':
             if ($projectID) {
-                $sql = 'SELECT * FROM `tasks` WHERE (`deadline` > DATE_ADD(NOW(), INTERVAL 1 DAY) AND `deadline` < DATE_ADD(DATE_ADD(NOW(), INTERVAL 1 DAY), INTERVAL 1 DAY)) AND project_id = ?';
+                $sql = 'SELECT * FROM `tasks` WHERE `deadline` BETWEEN "'.$todayMidnight->format(DATA_FORMAT).'" AND "'.$tomorrowMidnight->format(DATA_FORMAT).'" AND project_id = ?';
                 $condition = $projectID;
             } else {
-                $sql = 'SELECT * FROM `tasks` WHERE (`deadline` > DATE_ADD(NOW(), INTERVAL 1 DAY) AND `deadline` < DATE_ADD(DATE_ADD(NOW(), INTERVAL 1 DAY), INTERVAL 1 DAY)) AND `user_id` = ?';
+                $sql = 'SELECT * FROM `tasks` WHERE `deadline` BETWEEN "'.$todayMidnight->format(DATA_FORMAT).'" AND "'.$tomorrowMidnight->format(DATA_FORMAT).'" AND `user_id` = ?';
                 $condition = $userID;
             }
             break;
@@ -220,7 +224,7 @@ function isProjectExists($id, $projects)
  * @param string $format формат даты
  * @return boolean
  */
-function validateDate($date, $format = "Y-m-d H:i")
+function validateDate($date, $format = 'Y-m-d H:i')
 {
     $receivedDate = DateTime::createFromFormat($format, $date);
     return $receivedDate && $receivedDate->format($format) == $date;

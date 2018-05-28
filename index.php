@@ -7,12 +7,13 @@ if (!isset($_SESSION['user'])) {
     exit();
 }
 
+const SEC_IN_HOUR = 3600;
+const HOUR_IN_DAY = 24;
+const DATA_FORMAT = 'Y-m-d H-i';
+
 require('functions.php');
 require('db-config.php');
 require('mysql_helper.php');
-
-const SEC_IN_HOUR = 3600;
-const HOUR_IN_DAY = 24;
 
 $db = new mysqli(DB['server'], DB['username'], DB['password'], DB['db']);
 
@@ -73,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['task-form'])) {
         }
     } else {
         array_pop($newTask);
-        $newTask['path'] = 'NULL';
+        $newTask['path'] = '';
     }
 
     if (!count($errorsTask)) {
