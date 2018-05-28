@@ -16,30 +16,9 @@ if (isset($_SESSION['user'])) {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $logInForm = array_map('strip_tags', $_POST);
-    $errors = [];
+    unset($logInForm['login']);
 
-    if (empty($logInForm['password'])) {
-        $errors['password'] = 'Это поле надо заполнить';
-    }
-
-    if (!filter_var($logInForm['email'], FILTER_VALIDATE_EMAIL)) {
-        $errors['email'] = empty($logInForm['email']) ? 'Это поле надо заполнить' : 'Введите корректный E-mail';
-    }
-
-    if (!count($errors)) {
-        $user = getData($db, $getUser, [$logInForm['email']]);
-        if ($user) {
-            if (password_verify($logInForm['password'], $user[0]['password'])) {
-                $_SESSION['user'] = $user[0];
-                header("Location: /index.php");
-                exit();
-            } else {
-                $errors['password'] = 'Неверный пароль';
-            }
-        } else {
-            $errors['email'] = 'Пользователь с таким именем не найден';
-        }
-    }
+    $errorsLogin = login($logInForm, $db);
 }
 
 $pageHeader = renderTemplate('templates/header.php', ['userName' => NULL]);

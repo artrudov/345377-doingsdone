@@ -2,8 +2,9 @@
 --  Insert data `CasesInOrder`.`users`
 -- -----------------------------------------------------
 INSERT INTO `users` (`name`,`password`,`email`,`contacts`,`registration`) VALUES
-('Артем Рудов',MD5('123456789'),'rababul@gmail.com','+7-999-999-99-99',CURRENT_TIMESTAMP()),
-('Крейдич Юлия',MD5('123456789'),'rababul2@gmail.com','+7-999-999-99-99',CURRENT_TIMESTAMP());
+('Игнат','$2y$10$OqvsKHQwr0Wk6FMZDoHo1uHoXd4UdxJG/5UDtUiie00XaxMHrW8ka','ignat.v@gmail.com',NULL,CURRENT_TIMESTAMP()),
+('Леночка','$2y$10$bWtSjUhwgggtxrnJ7rxmIe63ABubHQs0AS0hgnOo41IEdMHkYoSVa','kitty_93@li.ru',NULL,CURRENT_TIMESTAMP()),
+('Руслан','$2y$10$2OxpEH7narYpkOT1H5cApezuzh10tZEEQ2axgFOaKW.55LxIJBgWW','warrior07@mail.ru',NULL,CURRENT_TIMESTAMP());
 
 -- -----------------------------------------------------
 --  Insert data `CasesInOrder`.`projects`

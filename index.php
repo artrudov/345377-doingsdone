@@ -43,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['task-form'])) {
     $newTask = array_map('strip_tags', $_POST);
     unset($newTask['task-form']);
 
-    $id = intval($newTask['project']);
+    $id = isset($newTask['project']) ? intval($newTask['project']) : 0;
     $errorsTask = [];
 
     if (empty($newTask['name'])) {
@@ -54,13 +54,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['task-form'])) {
         $errorsTask['project'] = 'Выбраный проект не найден';
     }
 
-    if ($newTask['date']) {
+    if (isset($newTask['date'])) {
         validateDate($newTask['date']) ? : $errorsTask['date'] = 'Введите дату и время в формате: ГГГГ-ММ-ДД ЧЧ:ММ';
     } else {
         $newTask['date'] = 'NULL';
     }
 
-    if ($_FILES['preview']['size']) {
+    if (isset($_FILES['preview'])) {
         $tmp_name = $_FILES['preview']['tmp_name'];
         $path = $_FILES['preview']['name'];
 

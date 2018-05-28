@@ -233,3 +233,42 @@ function validateDate($date, $format = 'Y-m-d H:i')
     return $receivedDate && $receivedDate->format($format) == $date;
 }
 
+/**
+ * Функция входа пользователя
+ * @param array $loginData данные для входа
+ * @param mysqli $db соединение с базой данных
+ * @return array Массив ошибок
+ */
+function login($loginData, $db)
+{
+    $getUser = 'SELECT * FROM `users` WHERE `email` = ?';
+
+    $errorsLogin = [];
+
+    if (empty($loginData['password'])) {
+        $errorsLogin['password'] = 'Это поле надо заполнить';
+    }
+
+    if (!isset($loginData['email'])) {
+        $errorsLogin['email'] = 'Это поле надо заполнить';
+    } elseif (!filter_var($loginData['email'], FILTER_VALIDATE_EMAIL)){
+        $errorsLogin['email'] = 'Введите корректный E-mail';
+    }
+
+    if (!count($errorsLogin)) {
+        $user = getData($db, $getUser, [$loginData['email']]);
+        if ($user) {
+            if (password_verify($loginData['password'], $user[0]['password'])) {
+                $_SESSION['user'] = $user[0];
+                header("Location: /index.php");
+                exit();
+            } else {
+                $errorsLogin['password'] = 'Неверный пароль';
+            }
+        } else {
+            $errorsLogin['email'] = 'Пользователь с таким именем не найден';
+        }
+    }
+
+    return $errorsLogin;
+}
