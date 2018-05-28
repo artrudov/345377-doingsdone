@@ -37,8 +37,6 @@ $getProjectTasks = 'SELECT * FROM `tasks` WHERE `user_id` =' . $userID . ' AND `
 $getAllTasks = 'SELECT *  FROM `tasks` WHERE `user_id` = ?';
 $setNewProject = 'INSERT INTO `projects` (`name`, `user_id` ) VALUES (?, ' . $userID . ')';
 
-var_dump($stripGet);
-
 if ($completeTaskID) {
     setCompleteDate($db, $checkTask, $completeTaskID);
 }
