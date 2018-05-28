@@ -16,8 +16,8 @@ const HOUR_IN_DAY = 24;
 
 $db = new mysqli(DB['server'], DB['username'], DB['password'], DB['db']);
 
-$projectID = isset($_GET['project_id']) ? intval($_GET['project_id']) : false;
-$filterTask = isset($_GET['filter']) ? $_GET['filter'] : false;
+$projectID = isset($_GET['project_id']) ? intval($_GET['project_id']) : 0;
+$filterTask = isset($_GET['filter']) ? $_GET['filter'] : 0;
 $completeTaskID = isset($_GET['task_id']) ? intval($_GET['task_id']) : 0;
 $checkTask = isset($_GET['check']) ? intval($_GET['check']) : 0;
 $show_complete_tasks = isset($_GET['show_completed']) ? $_GET['show_completed'] : 0;
@@ -30,32 +30,18 @@ $getProjects = 'SELECT * FROM `projects` WHERE `user_id` = ?';
 $getProjectTasks = 'SELECT * FROM `tasks` WHERE `user_id` =' . $userID . ' AND `project_id` = ?';
 $getAllTasks = 'SELECT *  FROM `tasks` WHERE `user_id` = ?';
 
-$getTodayTask = 'SELECT * FROM `tasks` WHERE `deadline` < DATE_ADD(NOW(), INTERVAL 1 DAY ) AND project_id = ?';
-$getTomorrowTask = 'SELECT * FROM `tasks` WHERE (`deadline` > DATE_ADD(NOW(), INTERVAL 1 DAY) AND `deadline` < DATE_ADD(DATE_ADD(NOW(), INTERVAL 1 DAY), INTERVAL 1 DAY)) AND project_id = ?';
-$getOverdueTask = 'SELECT * FROM `tasks` WHERE (`deadline` < NOW() OR NOT `complete_date`) AND  project_id = ?';
+$setNewProject = 'INSERT INTO `projects` (`name`, `user_id` ) VALUES (?, ' . $userID . ')';
 
-$getAllTodayTask = 'SELECT * FROM `tasks` WHERE `deadline` < DATE_SUB(NOW(), INTERVAL 1 DAY )';
-$getAllTomorrowTask = 'SELECT * FROM `tasks` WHERE (`deadline` > DATE_ADD(NOW(), INTERVAL 1 DAY) AND `deadline` < DATE_ADD(DATE_ADD(NOW(), INTERVAL 1 DAY), INTERVAL 1 DAY))';
-$getAllOverdueTask = 'SELECT * FROM `tasks` WHERE (`deadline` < NOW() OR NOT `complete_date`)';
-
-$setCheckTask = 'UPDATE `tasks` SET `complete_date` = NOW() WHERE `id` = ?';
-$backCheckTask = 'UPDATE `tasks` SET `complete_date` = NULL WHERE `id` = ?';
-
-$setNewTask = 'INSERT INTO `tasks` (`name`,`create_date`,`complete_date`,`project_id`,`deadline`,`file`, `user_id` )
-        VALUES (?, NOW(), NULL, ?, ?, ?, ' . $userID . ')';
-$setNewProject = 'INSERT INTO `projects` (`name`, `user_id` )
-        VALUES (?, ' . $userID . ')';
-
-if ($completeTaskID && $checkTask) {
-    updateEntry($db, $setCheckTask, [$completeTaskID]);
-} else if ($completeTaskID && !$checkTask) {
-    updateEntry($db, $backCheckTask, [$completeTaskID]);
+if ($completeTaskID) {
+    setCompleteDate($db, $checkTask, $completeTaskID);
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['task-form'])) {
-    $newTask = $_POST;
+    $newTask = array_map(function ($item) {return strip_tags($item);}, $_POST);
     $id = intval($newTask['project']);
     $errorsTask = [];
+
+    var_dump($newTask);
 
     if (empty($newTask['name'])) {
         $errorsTask['name'] = 'Это поле надо заполнить';
@@ -86,13 +72,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['task-form'])) {
     }
 
     if (!count($errorsTask)) {
-        addNewEntry($db, $setNewTask, $newTask);
+        addNewTask($db, $userID, $newTask);
         unset($newTask);
     }
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['project-form'])) {
-    $newProject = $_POST;
+    $newProject = array_map(function ($item) {return strip_tags($item);}, $_POST);
     $errorsProject = [];
 
     if (empty($newProject['name'])) {
@@ -101,7 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['project-form'])) {
 
     if (!count($errorsProject)) {
         array_pop($newProject);
-        addNewEntry($db, $setNewProject, $newProject);
+        executeQuery($db, $setNewProject, $newProject);
         unset($newProject);
     }
 }
@@ -121,28 +107,8 @@ if ($isProject) {
     $errorMessage = 'Указанной категории нет';
 }
 
-switch ($filterTask) {
-    case 'today':
-        if ($projectID !== false) {
-            $tasks = getData($db, $getTodayTask, [$projectID]);
-        } else if (!$projectID) {
-            $tasks = getData($db, $getAllTodayTask, []);
-        }
-        break;
-    case 'tomorrow':
-        if (!$projectID) {
-            $tasks = getData($db, $getAllTomorrowTask, []);
-        } else {
-            $tasks = getData($db, $getTomorrowTask, [$projectID]);
-        }
-        break;
-    case 'overdue':
-        if (!$projectID) {
-            $tasks = getData($db, $getAllOverdueTask, []);
-        } else {
-            $tasks = getData($db, $getOverdueTask, [$projectID]);
-        }
-        break;
+if ($filterTask) {
+    $tasks = getFilterDate($db, $projectID, $userID, $filterTask);
 }
 
 $pageHeader = renderTemplate('templates/header.php', ['userName' => $userName]);

@@ -36,16 +36,16 @@
                         <label class="checkbox task__checkbox">
                             <input class="checkbox__input visually-hidden" value="<?= $task['id'] ?>"
                                    type="checkbox" checked>
-                            <span class="checkbox__text"><?= strip_tags($task['name']) ?></span>
+                            <span class="checkbox__text"><?= $task['name'] ?></span>
                         </label>
                     </td>
 
                     <td class="task__file">
                         <? if ($task['file'] !== 'NULL'): ?>
                             <a class="download-link"
-                               href="/uploads/<?= $task['file'] ?>"><?= $task['file']?></a>
+                               href="/uploads/<?= $task['file'] ?>"><?= $task['file'] ?></a>
                         <? endif; ?>                    </td>
-                    <td class="task__date"><?= strip_tags($task['deadline']) ?></td>
+                    <td class="task__date"><?= $task['deadline'] ?></td>
                 </tr>
             <? endif; ?>
         <? else: ?>
@@ -54,17 +54,17 @@
                 <td class="task__select">
                     <label class="checkbox task__checkbox">
                         <input class="checkbox__input visually-hidden" type="checkbox" value="<?= $task['id'] ?>">
-                        <span class="checkbox__text"><?= strip_tags($task['name']) ?></span>
+                        <span class="checkbox__text"><?= $task['name'] ?></span>
                     </label>
                 </td>
 
                 <td class="task__file">
                     <? if ($task['file'] !== 'NULL'): ?>
-                    <a class="download-link"
-                       href="/uploads/<?= $task['file'] ?>"><?= $task['file']?></a>
+                        <a class="download-link"
+                           href="/uploads/<?= $task['file'] ?>"><?= $task['file'] ?></a>
                     <? endif; ?>
                 </td>
-                <td class="task__date"><?= date("d-m-Y", strtotime($task['deadline']))?></td>
+                <td class="task__date"><?= date("d-m-Y", strtotime($task['deadline'])) ?></td>
             </tr>
         <? endif; ?>
     <? endforeach; ?>

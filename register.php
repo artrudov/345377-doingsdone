@@ -12,7 +12,7 @@ $setNewUser = 'INSERT INTO `users` (`email`,`password`,`name`,`contacts`,`regist
 $getUser = 'SELECT * FROM `users` WHERE `email` = ?';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registration-form'])) {
-    $newUser = $_POST;
+    $newUser = array_map(function ($item) {return strip_tags($item);}, $_POST);
     $errorsRegistration = [];
     array_pop($newUser);
 
@@ -44,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registration-form']))
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
-    $logInForm = $_POST;
+    $logInForm = array_map(function ($item) {return strip_tags($item);}, $_POST);
     $errorsLogin = [];
     array_pop($logInForm);
 

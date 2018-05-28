@@ -15,7 +15,7 @@ if (isset($_SESSION['user'])) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST'  ) {
-    $logInForm = $_POST;
+    $logInForm = array_map(function ($item) {return strip_tags($item);}, $_POST);
     $errors = [];
 
     if (empty($logInForm['password'])) {

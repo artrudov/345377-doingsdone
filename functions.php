@@ -80,6 +80,61 @@ function getData($db, $sql, $condition)
 }
 
 /**
+ * Функция фильтрующая задачи
+ * @param mysqli $db ресурс базы данных
+ * @param integer $projectID идентификатор проекта
+ * @param integer $userID идентификатор пользователя
+ * @param integer $filterTask условие фильтрации
+ * @return array массив с данными
+ */
+function getFilterDate($db, $projectID, $userID, $filterTask)
+{
+    $sql = '';
+    $condition = [];
+    switch ($filterTask) {
+        case 'all':
+            if ($projectID) {
+                $sql = 'SELECT * FROM `tasks` WHERE project_id = ?';
+                $condition = $projectID;
+            } else {
+                $sql = 'SELECT * FROM `tasks` WHERE `user_id` = ?';
+                $condition = $userID;
+            }
+            break;
+        case 'today':
+            if ($projectID) {
+                $sql = 'SELECT * FROM `tasks` WHERE `deadline` < DATE_ADD(NOW(), INTERVAL 1 DAY ) AND project_id = ?';
+                $condition = $projectID;
+            } else {
+                $sql = 'SELECT * FROM `tasks` WHERE `deadline` < DATE_ADD(NOW(), INTERVAL 1 DAY ) AND user_id = ?';
+                $condition = $userID;
+            }
+            break;
+        case 'tomorrow':
+            if ($projectID) {
+                $sql = 'SELECT * FROM `tasks` WHERE (`deadline` > DATE_ADD(NOW(), INTERVAL 1 DAY) AND `deadline` < DATE_ADD(DATE_ADD(NOW(), INTERVAL 1 DAY), INTERVAL 1 DAY)) AND project_id = ?';
+                $condition = $projectID;
+            } else {
+                $sql = 'SELECT * FROM `tasks` WHERE (`deadline` > DATE_ADD(NOW(), INTERVAL 1 DAY) AND `deadline` < DATE_ADD(DATE_ADD(NOW(), INTERVAL 1 DAY), INTERVAL 1 DAY)) AND `user_id` = ?';
+                $condition = $userID;
+            }
+            break;
+        case 'overdue':
+            if ($projectID) {
+                $sql = 'SELECT * FROM `tasks` WHERE (`deadline` < NOW() OR NOT `complete_date`) AND  project_id = ?';
+                $condition = $projectID;
+
+            } else {
+                $sql = 'SELECT * FROM `tasks` WHERE (`deadline` < NOW() OR NOT `complete_date`) AND `user_id` = ?';
+                $condition = $userID;
+            }
+            break;
+    }
+
+    return getData($db, $sql, [$condition]);
+}
+
+/**
  * Функция проверки наличия запрашиваемых данных в базе
  * @param mysqli $db ресурс базы данных
  * @param string $sql строка запроза
@@ -99,13 +154,13 @@ function getEntries($db, $sql, $condition)
 }
 
 /**
- * Функция добавления новой записи в базу данных
+ * Функция выполнения запроса
  * @param mysqli $db ресурс базы данных
  * @param string $sql строка запроза
  * @param array $formsData данные из формы
  * @return boolean результат добавления задачи в базу данных
  */
-function addNewEntry($db, $sql, $formsData)
+function executeQuery($db, $sql, $formsData)
 {
     $resource = mysqli_prepare($db, $sql);
     $stmt = db_get_prepare_stmt($db, $sql, $formsData);
@@ -114,18 +169,37 @@ function addNewEntry($db, $sql, $formsData)
 }
 
 /**
- * Функция обновления записи в базу данных
+ * Функция добавления новой задачи у активного пользователя
  * @param mysqli $db ресурс базы данных
- * @param string $sql строка запроза
+ * @param integer $userID идентификатор пользователя
  * @param array $formsData данные из формы
  * @return boolean результат добавления задачи в базу данных
  */
-function updateEntry($db, $sql, $formsData)
+function addNewTask($db, $userID, $formsData)
 {
-    $resource = mysqli_prepare($db, $sql);
-    $stmt = db_get_prepare_stmt($db, $sql, $formsData);
-    $result = mysqli_stmt_execute($stmt);
-    return $result;
+    $sql = 'INSERT INTO `tasks` (`name`,`create_date`,`complete_date`,`project_id`,`deadline`,`file`, `user_id` )
+        VALUES (?, NOW(), NULL, ?, ?, ?, ' . $userID . ')';
+
+    return executeQuery($db, $sql, $formsData);
+}
+
+/**
+ * Функция изменения статуса задачи
+ * @param mysqli $db ресурс базы данных
+ * @param integer $checkTask текущий статус задачи
+ * @param integer $taskID идентификатор задачи
+ * @return boolean результат добавления задачи в базу данных
+ */
+function setCompleteDate($db, $checkTask, $taskID)
+{
+    if ($checkTask) {
+        $sql = 'UPDATE `tasks` SET `complete_date` = NOW() WHERE `id` = ?';
+
+    } else {
+        $sql = 'UPDATE `tasks` SET `complete_date` = NULL WHERE `id` = ?';
+    }
+
+    return executeQuery($db, $sql, [$taskID]);
 }
 
 /**
