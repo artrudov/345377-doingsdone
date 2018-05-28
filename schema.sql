@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS `doings_done`.`users` (
   `registration` TIMESTAMP NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `id_UNIQUE` (`id` ASC),
-  UNIQUE INDEX `email_UNIQUE` (`email` ASC),
+  UNIQUE INDEX `email_UNIQUE` (`email` ASC))
 ENGINE = InnoDB;
 
 
