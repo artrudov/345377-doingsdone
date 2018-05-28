@@ -16,11 +16,17 @@ const HOUR_IN_DAY = 24;
 
 $db = new mysqli(DB['server'], DB['username'], DB['password'], DB['db']);
 
-$projectID = isset($_GET['project_id']) ? intval($_GET['project_id']) : 0;
-$filterTask = isset($_GET['filter']) ? $_GET['filter'] : 0;
-$completeTaskID = isset($_GET['task_id']) ? intval($_GET['task_id']) : 0;
-$checkTask = isset($_GET['check']) ? intval($_GET['check']) : 0;
-$show_complete_tasks = isset($_GET['show_completed']) ? $_GET['show_completed'] : 0;
+if(isset($_GET)) {
+    $stripGet = array_map(function ($item) {
+        return strip_tags($item);
+    }, $_GET);
+}
+
+$projectID = isset($stripGet['project_id']) ? intval($stripGet['project_id']) : 0;
+$filterTask = isset($stripGet['filter']) ? $stripGet['filter'] : 0;
+$completeTaskID = isset($stripGet['task_id']) ? intval($stripGet['task_id']) : 0;
+$checkTask = isset($stripGet['check']) ? intval($stripGet['check']) : 0;
+$show_complete_tasks = isset($stripGet['show_completed']) ? $stripGet['show_completed'] : 0;
 
 $user = $_SESSION['user'];
 $userID = $user['id'];
@@ -29,8 +35,9 @@ $userName = $user['name'];
 $getProjects = 'SELECT * FROM `projects` WHERE `user_id` = ?';
 $getProjectTasks = 'SELECT * FROM `tasks` WHERE `user_id` =' . $userID . ' AND `project_id` = ?';
 $getAllTasks = 'SELECT *  FROM `tasks` WHERE `user_id` = ?';
-
 $setNewProject = 'INSERT INTO `projects` (`name`, `user_id` ) VALUES (?, ' . $userID . ')';
+
+var_dump($stripGet);
 
 if ($completeTaskID) {
     setCompleteDate($db, $checkTask, $completeTaskID);
