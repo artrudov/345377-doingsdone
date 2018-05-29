@@ -41,8 +41,6 @@ CREATE TABLE IF NOT EXISTS `doings_done`.`projects` (
   `name` VARCHAR(255) NOT NULL,
   `user_id` INT UNSIGNED NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE INDEX `id_UNIQUE` (`id` ASC),
-  INDEX `fk_projects_users1_idx` (`user_id` ASC),
   UNIQUE INDEX `name_UNIQUE` (`name` ASC),
   CONSTRAINT `fk_projects_users1`
     FOREIGN KEY (`user_id`)
@@ -62,13 +60,9 @@ CREATE TABLE IF NOT EXISTS `doings_done`.`tasks` (
   `complete_date` TIMESTAMP NULL,
   `deadline` TIMESTAMP NULL,
   `file` VARCHAR(255) NULL,
-  `project_id` INT UNSIGNED NOT NULL,
+  `project_id` INT UNSIGNED,
   `user_id` INT UNSIGNED NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE INDEX `name_UNIQUE` (`name` ASC),
-  UNIQUE INDEX `id_UNIQUE` (`id` ASC),
-  INDEX `fk_tasks_projects1_idx` (`project_id` ASC),
-  INDEX `fk_tasks_users1_idx` (`user_id` ASC),
   CONSTRAINT `fk_tasks_projects1`
     FOREIGN KEY (`project_id`)
     REFERENCES `doings_done`.`projects` (`id`)
