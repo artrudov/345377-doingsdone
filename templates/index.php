@@ -49,6 +49,7 @@
                 </tr>
             <? endif; ?>
         <? else: ?>
+
             <tr class="tasks__item task
             <? if ($task['deadline'] !== NULL): ?>
                 <?= compareDate($task['deadline'], $task['complete_date']) ? 'task--important' : '' ?>

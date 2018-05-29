@@ -77,7 +77,7 @@ function checkDeadline($taskDate)
 
 function compareDate($taskDate, $taskComplete)
 {
-    return (checkDeadline($taskDate) / HOUR_IN_DAY < HOUR_IN_DAY) && !$taskComplete;
+    return (checkDeadline($taskDate) / SEC_IN_HOUR < HOUR_IN_DAY) && !$taskComplete;
 }
 
 /**
