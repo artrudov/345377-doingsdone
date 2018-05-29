@@ -25,7 +25,7 @@ $pageHeader = renderTemplate('templates/header.php', ['userName' => NULL]);
 
 $modalAuthorization = renderTemplate('templates/modal-authorization.php', [
     'user' => $user ?? [],
-    'errors' => $errors ?? [],
+    'errors' => $errorsLogin ?? [],
     'logInForm' => $logInForm ?? []
 ]);
 
@@ -33,7 +33,7 @@ $layoutContent = renderTemplate('templates/guest.php', [
     'titlePage' => 'Дела в порядке | Регистрация',
     'pageHeader' => $pageHeader,
     'modalAuthorization' => $modalAuthorization,
-    'errors' => $errors ?? []
+    'errors' => $errorsLogin ?? []
 ]);
 
 print($layoutContent);

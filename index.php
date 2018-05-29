@@ -88,7 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['project-form'])) {
         $errorsProject['name'] = 'Это поле надо заполнить';
     }
 
-    if (!count($errorsProject)) {
+    if (!count($errorsProject) && isProjectExists($projectID, $projects)) {
         $newProject['userID'] = $userID;
         executeQuery($db, $setNewProject, $newProject);
         unset($newProject);

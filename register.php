@@ -11,7 +11,7 @@ $getUserEmail = 'SELECT COUNT(*) FROM `users` WHERE `email` = ?';
 $setNewUser = 'INSERT INTO `users` (`email`,`password`,`name`,`contacts`,`registration`) VALUES (?, ?, ?, NULL, NOW())';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registration-form'])) {
-    $newUser = array_map('strip_tags', $_POST);
+    $newUser = $_POST;
     $errorsRegistration = [];
     unset($newUser['registration-form']);
 
@@ -45,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registration-form']))
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
-    $logInForm = array_map('strip_tags', $_POST);
+    $logInForm = array_map('htmlspecialchars', $_POST);
     unset($logInForm['login']);
 
     $errorsLogin = login($logInForm, $db);

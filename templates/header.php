@@ -12,7 +12,7 @@
                 <img src="img/user-pic.jpg" width="40" height="40" alt="Пользователь">
             </div>
             <div class="user-menu__data">
-                <p><?= strip_tags($userName) ?></p>
+                <p><?= htmlspecialchars($userName) ?></p>
                 <a href="logout.php">Выйти</a>
             </div>
         <? else: ?>
