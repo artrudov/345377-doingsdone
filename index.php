@@ -34,6 +34,7 @@ $getProjects = 'SELECT * FROM `projects` WHERE `user_id` = ?';
 $getProjectTasks = 'SELECT * FROM `tasks` WHERE `user_id` = ? AND `project_id` = ?';
 $getAllTasks = 'SELECT *  FROM `tasks` WHERE `user_id` = ?';
 $setNewProject = 'INSERT INTO `projects` (`name`, `user_id` ) VALUES (?, ?)';
+$getProjectName = 'SELECT COUNT(*) FROM `projects` WHERE `name` = ?';
 
 if ($completeTaskID) {
     setCompleteDate($db, $checkTask, $completeTaskID);
@@ -88,7 +89,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['project-form'])) {
         $errorsProject['name'] = 'Это поле надо заполнить';
     }
 
-    if (!count($errorsProject) && isProjectExists($projectID, $projects)) {
+    if (isEntriesExist($db, $getProjectName, [$newProject['name']])) {
+        $errorsProject['name'] = 'Проект с таким именем уже существует';
+    }
+
+    if (!count($errorsProject)) {
         $newProject['userID'] = $userID;
         executeQuery($db, $setNewProject, $newProject);
         unset($newProject);
@@ -124,7 +129,7 @@ $pageContent = renderTemplate('templates/index.php', [
 ]);
 
 $modalProject = renderTemplate('templates/modal-project.php', [
-    'newTask' => $newTask ?? [],
+    'newProject' => $newProject ?? [],
     'errorsProject' => $errorsProject ?? []
 ]);
 

@@ -1,4 +1,4 @@
-<div class="modal" <?= count($errorsProject) ? : 'hidden';?> id="project_add">
+<div class="modal" <?= count($errorsProject) ?: 'hidden'; ?> id="project_add">
     <button class="modal__close" type="button" name="button">Закрыть</button>
 
     <h2 class="modal__heading">Добавление проекта</h2>
@@ -8,8 +8,11 @@
             <label class="form__label" for="project_name">Название <sup>*</sup></label>
 
             <input class="form__input <?= count($errorsProject) ? 'form__input--error' : '' ?>" type="text" name="name"
-                   id="project_name" value="" placeholder="Введите название проекта">
-            <?= isset($errorsProject['name']) ? $errorsProject['name'] : '' ?>
+                   id="project_name" value="<?= isset($newProject['name']) ? $newProject['name'] : '' ?>" placeholder="Введите название проекта">
+
+            <p class="form__message">
+                <?= isset($errorsProject['name']) ? $errorsProject['name'] : '' ?>
+            </p>
         </div>
 
         <div class="form__row form__row--controls">
