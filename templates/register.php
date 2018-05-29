@@ -37,7 +37,7 @@
 
                         <input class="form__input <?= isset($errors['email']) ? 'form__input--error' : '' ?>"
                                type="text"
-                               name="email" id="email" value="<?= isset($newUser['email']) ? htmlspecialchars($newUser['email']) : '' ?>"
+                               name="email" id="email" value="<?= isset($newUser['email']) ? $newUser['email']: '' ?>"
                                placeholder="Введите e-mail">
 
                         <p class="form__message"><?= isset($errors['email']) ? $errors['email'] : '' ?></p>
@@ -56,7 +56,7 @@
                         <label class="form__label" for="name">Имя <sup>*</sup></label>
 
                         <input class="form__input <?= isset($errors['name']) ? 'form__input--error' : '' ?>" type="text"
-                               name="name" id="name" value="<?= isset($newUser['name']) ? htmlspecialchars($newUser['name']) : '' ?>"
+                               name="name" id="name" value="<?= isset($newUser['name']) ? $newUser['name'] : '' ?>"
                                placeholder="Введите имя">
                         <p class="form__message"><?= isset($errors['name']) ? $errors['name'] : '' ?></p>
 
