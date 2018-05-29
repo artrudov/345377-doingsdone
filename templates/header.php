@@ -4,7 +4,7 @@
     </a>
 
     <div class="main-header__side">
-        <?php if ($userName !== NULL): ?>
+        <? if (isset($userName)): ?>
             <a class="main-header__side-item button button--plus open-modal" target="task_add">Добавить задачу</a>
 
             <div class="main-header__side-item user-menu">
@@ -12,14 +12,14 @@
                 <img src="img/user-pic.jpg" width="40" height="40" alt="Пользователь">
             </div>
             <div class="user-menu__data">
-                <p><?= $userName ?></p>
+                <p><?= strip_tags($userName) ?></p>
                 <a href="logout.php">Выйти</a>
             </div>
-        <?php else: ?>
+        <? else: ?>
 
             <a class="main-header__side-item button button--transparent open-modal"
                target="user_login">Войти</a>
             </div>
-        <?php endif; ?>
+        <? endif; ?>
     </div>
 </header>

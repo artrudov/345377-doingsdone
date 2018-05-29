@@ -33,7 +33,7 @@
                             <li class="main-navigation__list-item <?= $projectID === $project['id'] ? 'main-navigation__list-item--active' : '' ?>">
                                 <a class="main-navigation__list-item-link"
                                    href="/index.php?project_id=<?= $project['id']; ?>">
-                                    <?= $project['name'] ?></a>
+                                    <?= strip_tags($project['name']) ?></a>
                                 <span
                                     class="main-navigation__list-item-count"><?= getTasks($tasks, $project['id']) ?></span>
                             </li>
