@@ -43,7 +43,6 @@ CREATE TABLE IF NOT EXISTS `doings_done`.`projects` (
   PRIMARY KEY (`id`),
   UNIQUE INDEX `id_UNIQUE` (`id` ASC),
   INDEX `fk_projects_users1_idx` (`user_id` ASC),
-  UNIQUE INDEX `name_UNIQUE` (`name` ASC),
   CONSTRAINT `fk_projects_users1`
     FOREIGN KEY (`user_id`)
     REFERENCES `doings_done`.`users` (`id`)

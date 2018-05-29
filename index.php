@@ -35,7 +35,7 @@ $getProjectTasks = 'SELECT * FROM `tasks` WHERE `user_id` = ? AND `project_id` =
 $getIncomeProject = 'SELECT * FROM `tasks` WHERE `user_id` = ? AND `project_id` IS NULL';
 $getAllTasks = 'SELECT *  FROM `tasks` WHERE `user_id` = ?';
 $setNewProject = 'INSERT INTO `projects` (`name`, `user_id` ) VALUES (?, ?)';
-$getProjectName = 'SELECT COUNT(*) FROM `projects` WHERE `name` = ?';
+$getProjectName = 'SELECT COUNT(*) FROM `projects` WHERE `name` = ? AND `user_id` = ?';
 
 if ($completeTaskID) {
     setCompleteDate($db, $checkTask, $completeTaskID);
@@ -89,7 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['project-form'])) {
         $errorsProject['name'] = 'Это поле надо заполнить';
     }
 
-    if (isEntriesExist($db, $getProjectName, [$newProject['name']])) {
+    if (isEntriesExist($db, $getProjectName, [$newProject['name'], $userID])) {
         $errorsProject['name'] = 'Проект с таким именем уже существует';
     }
 
