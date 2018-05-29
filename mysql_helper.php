@@ -33,6 +33,7 @@ function db_get_prepare_stmt($link, $sql, $data = []) {
                 $types .= $type;
                 $stmt_data[] = $value;
             }
+
         }
 
         $values = array_merge([$stmt, $types], $stmt_data);
@@ -40,6 +41,5 @@ function db_get_prepare_stmt($link, $sql, $data = []) {
         $func = 'mysqli_stmt_bind_param';
         $func(...$values);
     }
-
     return $stmt;
 }

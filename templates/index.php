@@ -43,17 +43,20 @@
                     <td class="task__file">
                         <? if ($task['file'] !== ''): ?>
                             <a class="download-link"
-                               href="/uploads/<?= $task['file'] ?>"><?= strip_tags(task['file']) ?></a>
+                               href="/uploads/<?= $task['file'] ?>"><?= strip_tags($task['file']) ?></a>
                         <? endif; ?>                    </td>
                     <td class="task__date"><?= $task['deadline'] ?></td>
                 </tr>
             <? endif; ?>
         <? else: ?>
             <tr class="tasks__item task
-        <?= compareDate($task['deadline'], $task['complete_date']) ? 'task--important' : '' ?>">
+            <? if ($task['deadline'] !== NULL): ?>
+                <?= compareDate($task['deadline'], $task['complete_date']) ? 'task--important' : '' ?>
+            <? endif; ?>">
                 <td class="task__select">
                     <label class="checkbox task__checkbox">
-                        <input class="checkbox__input visually-hidden" type="checkbox" value="<?= strip_tags($task['id']) ?>">
+                        <input class="checkbox__input visually-hidden" type="checkbox"
+                               value="<?= strip_tags($task['id']) ?>">
                         <span class="checkbox__text"><?= $task['name'] ?></span>
                     </label>
                 </td>
@@ -64,7 +67,7 @@
                            href="/uploads/<?= $task['file'] ?>"><?= strip_tags($task['file']) ?></a>
                     <? endif; ?>
                 </td>
-                <td class="task__date"><?= date("d-m-Y", strtotime($task['deadline'])) ?></td>
+                <td class="task__date"><?= $task['deadline'] !== NULL ? date("d-m-Y", strtotime($task['deadline'])) : '' ?></td>
             </tr>
         <? endif; ?>
     <? endforeach; ?>

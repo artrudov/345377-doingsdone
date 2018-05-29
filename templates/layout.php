@@ -23,10 +23,16 @@
                 <nav class="main-navigation">
                     <ul class="main-navigation__list">
 
-                        <li class="main-navigation__list-item <?= !$projectID ? 'main-navigation__list-item--active' : '' ?>">
+                        <li class="main-navigation__list-item <?= $projectID === '' ? 'main-navigation__list-item--active' : '' ?>">
                             <a class="main-navigation__list-item-link" href="/">Все</a>
                             <span
                                 class="main-navigation__list-item-count"><?= getTasks($tasks, 0) ?></span>
+                        </li>
+
+                        <li class="main-navigation__list-item <?= $projectID === 0 ? 'main-navigation__list-item--active' : '' ?>">
+                            <a class="main-navigation__list-item-link" href="/index.php?project_id=0">Входящее</a>
+                            <span
+                                class="main-navigation__list-item-count"><?= getTasks($tasks, 'income') ?></span>
                         </li>
 
                         <?php foreach ($projects as $project): ?>

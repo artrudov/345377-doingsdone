@@ -65,7 +65,7 @@ CREATE TABLE IF NOT EXISTS `doings_done`.`tasks` (
   `project_id` INT UNSIGNED,
   `user_id` INT UNSIGNED NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE INDEX `name_UNIQUE` (`name` ASC),
+  INDEX `name_UNIQUE` (`name` ASC),
   UNIQUE INDEX `id_UNIQUE` (`id` ASC),
   INDEX `fk_tasks_projects1_idx` (`project_id` ASC),
   INDEX `fk_tasks_users1_idx` (`user_id` ASC),

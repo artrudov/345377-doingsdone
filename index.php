@@ -16,11 +16,11 @@ require('mysql_helper.php');
 
 $db = connect();
 
-if(isset($_GET)) {
+if (isset($_GET)) {
     $stripGet = array_map('strip_tags', $_GET);
 }
 
-$projectID = isset($stripGet['project_id']) ? intval($stripGet['project_id']) : 0;
+$projectID = isset($stripGet['project_id']) ? intval($stripGet['project_id']) : '';
 $filterTask = isset($stripGet['filter']) ? $stripGet['filter'] : 0;
 $completeTaskID = isset($stripGet['task_id']) ? intval($stripGet['task_id']) : 0;
 $checkTask = isset($stripGet['check']) ? intval($stripGet['check']) : 0;
@@ -32,6 +32,7 @@ $userName = $user['name'];
 
 $getProjects = 'SELECT * FROM `projects` WHERE `user_id` = ?';
 $getProjectTasks = 'SELECT * FROM `tasks` WHERE `user_id` = ? AND `project_id` = ?';
+$getIncomeProject = 'SELECT * FROM `tasks` WHERE `user_id` = ? AND `project_id` IS NULL';
 $getAllTasks = 'SELECT *  FROM `tasks` WHERE `user_id` = ?';
 $setNewProject = 'INSERT INTO `projects` (`name`, `user_id` ) VALUES (?, ?)';
 $getProjectName = 'SELECT COUNT(*) FROM `projects` WHERE `name` = ?';
@@ -51,20 +52,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['task-form'])) {
         $errorsTask['name'] = 'Это поле надо заполнить';
     }
 
-    if (!isProjectExists($id, getData($db, $getProjects, [$userID]))) {
-        $errorsTask['project'] = 'Выбраный проект не найден';
+    if ($id && $id !== 0) {
+        isProjectExists($id, getData($db, $getProjects, [$userID])) ?: $errorsTask['project'] = 'Выбраный проект не найден';
     }
 
-    if (isset($newTask['date'])) {
-        validateDate($newTask['date']) ? : $errorsTask['date'] = 'Введите дату и время в формате: ГГГГ-ММ-ДД ЧЧ:ММ';
+    if (!empty($newTask['date'])) {
+        validateDate($newTask['date']) ?: $errorsTask['date'] = 'Введите дату и время в формате: ГГГГ-ММ-ДД ЧЧ:ММ';
     } else {
-        $newTask['date'] = 'NULL';
+        $newTask['date'] = 0;
     }
 
     if (isset($_FILES['preview'])) {
         $tmp_name = $_FILES['preview']['tmp_name'];
         $path = $_FILES['preview']['name'];
-
         if (!count($errorsTask)) {
             move_uploaded_file($tmp_name, 'uploads/' . $path);
             $newTask['path'] = $path;
@@ -75,7 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['task-form'])) {
 
     if (!count($errorsTask)) {
         $newTask['user'] = $userID;
-        addNewTask($db, $newTask);
+        addNewTask($db, $newTask, $id);
         unset($newTask);
     }
 }
@@ -107,7 +107,9 @@ $isProject = isProjectExists($projectID, $projects);
 
 if ($isProject) {
     $tasks = getData($db, $getProjectTasks, [$userID, $projectID]);
-} else if (!$projectID) {
+} elseif ($projectID === 0) {
+    $tasks = getData($db, $getIncomeProject, [$userID]);
+} elseif (!$projectID) {
     $tasks = $allTasks;
 } else {
     header('Status: 404, not found');

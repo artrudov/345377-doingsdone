@@ -25,6 +25,12 @@ function getTasks($tasks, $projectCategory)
         return count($tasks);
     }
 
+    if ($projectCategory === 'income') {
+        return count(array_filter($tasks, function ($task) use ($projectCategory) {
+            return $task['project_id'] === NULL;
+        }));
+    }
+
     return count(array_filter($tasks, function ($task) use ($projectCategory) {
         return $task['project_id'] === $projectCategory;
     }));
@@ -71,7 +77,7 @@ function checkDeadline($taskDate)
 
 function compareDate($taskDate, $taskComplete)
 {
-    return (checkDeadline($taskDate) / HOUR_IN_DAY < HOUR_IN_DAY) && $taskDate !== 'NULL' && !$taskComplete;
+    return (checkDeadline($taskDate) / HOUR_IN_DAY < HOUR_IN_DAY) && !$taskComplete;
 }
 
 /**
@@ -97,6 +103,7 @@ function executeQuery($db, $sql, $formsData)
  */
 function getData($db, $sql, $condition)
 {
+
     $resource = mysqli_stmt_get_result(executeQuery($db, $sql, $condition));
     $result = mysqli_fetch_all($resource, MYSQLI_ASSOC);
 
@@ -181,12 +188,32 @@ function isEntriesExist($db, $sql, $condition)
  * Функция добавления новой задачи у активного пользователя
  * @param mysqli $db ресурс базы данных
  * @param array $formsData данные из формы
+ * @param null $idProject задачи без проекта
  * @return mysqli_stmt результат добавления задачи в базу данных
  */
-function addNewTask($db, $formsData)
+function addNewTask($db, $formsData, $idProject)
 {
-    $sql = 'INSERT INTO `tasks` (`name`,`create_date`,`complete_date`,`project_id`,`deadline`,`file`, `user_id` )
+    if ($idProject) {
+        if ($formsData['date']) {
+            $sql = 'INSERT INTO `tasks` (`name`,`create_date`,`complete_date`,`project_id`,`deadline`,`file`, `user_id` )
         VALUES (?, NOW(), NULL, ?, ?, ?, ?)';
+        } else {
+            $sql = 'INSERT INTO `tasks` (`name`,`create_date`,`complete_date`,`project_id`,`deadline`,`file`, `user_id` )
+        VALUES (?, NOW(), NULL, ?, NULL, ?, ?)';
+            unset($formsData['date']);
+        }
+    } else {
+        if ($formsData['date']) {
+            $sql = 'INSERT INTO `tasks` (`name`,`create_date`,`complete_date`,`project_id`,`deadline`,`file`, `user_id` )
+        VALUES (?, NOW(), NULL, NULL, ?, ?, ?)';
+        } else {
+            $sql = 'INSERT INTO `tasks` (`name`,`create_date`,`complete_date`,`project_id`,`deadline`,`file`, `user_id` )
+        VALUES (?, NOW(), NULL, NULL, NULL, ?, ?)';
+            unset($formsData['date']);
+        }
+        unset($formsData['project']);
+    }
+
     return executeQuery($db, $sql, $formsData);
 }
 
@@ -217,6 +244,10 @@ function setCompleteDate($db, $checkTask, $taskID)
  */
 function isProjectExists($id, $projects)
 {
+    if ($id === 'all') {
+        return true;
+    }
+
     $isProject = in_array($id, array_column($projects, 'id'));
     return $isProject && $isProject !== -1 ? true : false;
 }
@@ -251,7 +282,7 @@ function login($loginData, $db)
 
     if (!isset($loginData['email'])) {
         $errorsLogin['email'] = 'Это поле надо заполнить';
-    } elseif (!filter_var($loginData['email'], FILTER_VALIDATE_EMAIL)){
+    } elseif (!filter_var($loginData['email'], FILTER_VALIDATE_EMAIL)) {
         $errorsLogin['email'] = 'Введите корректный E-mail';
     }
 

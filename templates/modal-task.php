@@ -20,6 +20,7 @@
 
             <select class="form__input form__input--select <?= $errorsTask['project'] ? 'form__input--error' : '' ?>"
                     name="project" id="project">
+                <option value="not-project">Без проекта</option>
                 <? if (isset($projects)): ?>
                     <? foreach ($projects as $project): ?>
                         <option value="<?= $project['id'] ?>">
