@@ -1,4 +1,4 @@
-<div class="modal" id="task_add" <?= count($errorsTask) ? : 'hidden' ?>>
+<div class="modal" id="task_add" <?= count($errorsTask) ?: 'hidden' ?>>
     <button class="modal__close" type="button" name="button">Закрыть</button>
 
     <h2 class="modal__heading">Добавление задачи</h2>
@@ -20,10 +20,12 @@
 
             <select class="form__input form__input--select <?= $errorsTask['project'] ? 'form__input--error' : '' ?>"
                     name="project" id="project">
-                <? foreach ($projects as $project): ?>
-                    <option value="<?= $project['id'] ?>">
-                        <?= $project['name'] ?></option>
-                <? endforeach; ?>
+                <? if (isset($projects)): ?>
+                    <? foreach ($projects as $project): ?>
+                        <option value="<?= $project['id'] ?>">
+                            <?= $project['name'] ?></option>
+                    <? endforeach; ?>
+                <? endif; ?>
             </select>
             <p class="form__message">
                 <?= isset($errorsTask['project']) ? $errorsTask['project'] : '' ?>
