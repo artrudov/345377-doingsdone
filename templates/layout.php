@@ -30,7 +30,7 @@
                         </li>
 
                         <li class="main-navigation__list-item <?= $projectID === 0 ? 'main-navigation__list-item--active' : '' ?>">
-                            <a class="main-navigation__list-item-link" href="/index.php?project_id=0">Входящее</a>
+                            <a class="main-navigation__list-item-link" href="/index.php?project_id=0">Входящие</a>
                             <span
                                 class="main-navigation__list-item-count"><?= getTasks($tasks, 'income') ?></span>
                         </li>

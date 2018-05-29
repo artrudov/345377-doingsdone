@@ -15,7 +15,7 @@ if (isset($_SESSION['user'])) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $logInForm = array_map('strip_tags', $_POST);
+    $logInForm = $_POST;
     unset($logInForm['login']);
 
     $errorsLogin = login($logInForm, $db);

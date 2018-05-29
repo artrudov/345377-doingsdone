@@ -26,7 +26,7 @@ function getTasks($tasks, $projectCategory)
     }
 
     if ($projectCategory === 'income') {
-        return count(array_filter($tasks, function ($task) use ($projectCategory) {
+        return count(array_filter($tasks, function ($task) {
             return $task['project_id'] === NULL;
         }));
     }
@@ -188,7 +188,7 @@ function isEntriesExist($db, $sql, $condition)
  * Функция добавления новой задачи у активного пользователя
  * @param mysqli $db ресурс базы данных
  * @param array $formsData данные из формы
- * @param null $idProject задачи без проекта
+ * @param int $idProject задачи без проекта
  * @return mysqli_stmt результат добавления задачи в базу данных
  */
 function addNewTask($db, $formsData, $idProject)

@@ -45,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registration-form']))
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
-    $logInForm = array_map('htmlspecialchars', $_POST);
+    $logInForm = $_POST;
     unset($logInForm['login']);
 
     $errorsLogin = login($logInForm, $db);

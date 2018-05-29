@@ -56,8 +56,8 @@
                 <td class="task__select">
                     <label class="checkbox task__checkbox">
                         <input class="checkbox__input visually-hidden" type="checkbox"
-                               value="<?= strip_tags($task['id']) ?>">
-                        <span class="checkbox__text"><?= $task['name'] ?></span>
+                               value="<?= $task['id']?>">
+                        <span class="checkbox__text"><?= strip_tags($task['name']) ?></span>
                     </label>
                 </td>
 

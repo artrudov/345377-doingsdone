@@ -7,7 +7,7 @@
         <div class="form__row">
             <label class="form__label" for="name">Название <sup>*</sup></label>
 
-            <input class="form__input <?= $errorsTask['name'] ? 'form__input--error' : '' ?>" type="text" name="name"
+            <input class="form__input <?= isset($errorsTask['name']) ? 'form__input--error' : '' ?>" type="text" name="name"
                    id="name" value="<?= isset($newTask['name']) ? $newTask['name'] : '' ?>"
                    placeholder="Введите название">
             <p class="form__message">
@@ -18,7 +18,7 @@
         <div class="form__row">
             <label class="form__label" for="project">Проект <sup>*</sup></label>
 
-            <select class="form__input form__input--select <?= $errorsTask['project'] ? 'form__input--error' : '' ?>"
+            <select class="form__input form__input--select <?= isset($errorsTask['project']) ? 'form__input--error' : '' ?>"
                     name="project" id="project">
                 <option value="not-project">Без проекта</option>
                 <? if (isset($projects)): ?>
