@@ -36,14 +36,14 @@
                         <label class="checkbox task__checkbox">
                             <input class="checkbox__input visually-hidden" value="<?= $task['id'] ?>"
                                    type="checkbox" checked>
-                            <span class="checkbox__text"><?= strip_tags($task['name']) ?></span>
+                            <span class="checkbox__text"><?= htmlspecialchars($task['name']) ?></span>
                         </label>
                     </td>
 
                     <td class="task__file">
                         <? if ($task['file'] !== ''): ?>
                             <a class="download-link"
-                               href="/uploads/<?= $task['file'] ?>"><?= strip_tags($task['file']) ?></a>
+                               href="/uploads/<?= $task['file'] ?>"><?= htmlspecialchars($task['file']) ?></a>
                         <? endif; ?>                    </td>
                     <td class="task__date"><?= $task['deadline'] ?></td>
                 </tr>
@@ -58,14 +58,14 @@
                     <label class="checkbox task__checkbox">
                         <input class="checkbox__input visually-hidden" type="checkbox"
                                value="<?= $task['id']?>">
-                        <span class="checkbox__text"><?= strip_tags($task['name']) ?></span>
+                        <span class="checkbox__text"><?= htmlspecialchars($task['name']) ?></span>
                     </label>
                 </td>
 
                 <td class="task__file">
                     <? if ($task['file'] !== ''): ?>
                         <a class="download-link"
-                           href="/uploads/<?= $task['file'] ?>"><?= strip_tags($task['file']) ?></a>
+                           href="/uploads/<?= $task['file'] ?>"><?= htmlspecialchars($task['file']) ?></a>
                     <? endif; ?>
                 </td>
                 <td class="task__date"><?= $task['deadline'] !== NULL ? date("d-m-Y", strtotime($task['deadline'])) : '' ?></td>
