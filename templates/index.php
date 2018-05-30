@@ -8,15 +8,15 @@
 
 <div class="tasks-controls">
     <nav class="tasks-switch">
-        <a href="/<?= $projectID ? 'index.php?project_id=' . $projectID . '&' : '?' ?>filter=all"
+        <a href="/<?= $projectID ||  $projectID === 0 ? 'index.php?project_id=' . $projectID . '&' : '?' ?>filter=all"
            class="tasks-switch__item <?= $filterTask === 'all' || $filterTask === 0 ? 'tasks-switch__item--active' : '' ?>">Все
             задачи</a>
-        <a href="/<?= $projectID ? 'index.php?project_id=' . $projectID . '&' : '?' ?>filter=today"
+        <a href="/<?= $projectID ||  $projectID === 0 ? 'index.php?project_id=' . $projectID . '&' : '?' ?>filter=today"
            class="tasks-switch__item <?= $filterTask === 'today' ? 'tasks-switch__item--active' : '' ?>">Повестка
             дня</a>
-        <a href="/<?= $projectID ? 'index.php?project_id=' . $projectID . '&' : '?' ?>filter=tomorrow"
+        <a href="/<?= $projectID ||  $projectID === 0 ? 'index.php?project_id=' . $projectID . '&' : '?' ?>filter=tomorrow"
            class="tasks-switch__item <?= $filterTask === 'tomorrow' ? 'tasks-switch__item--active' : '' ?>">Завтра</a>
-        <a href="/<?= $projectID ? 'index.php?project_id=' . $projectID . '&' : '?' ?>filter=overdue"
+        <a href="/<?= $projectID ||  $projectID === 0 ? 'index.php?project_id=' . $projectID . '&' : '?' ?>filter=overdue"
            class="tasks-switch__item <?= $filterTask === 'overdue' ? 'tasks-switch__item--active' : '' ?>">Просроченные</a>
     </nav>
 
@@ -56,6 +56,7 @@
             <? endif; ?>">
                 <td class="task__select">
                     <label class="checkbox task__checkbox">
+
                         <input class="checkbox__input visually-hidden" type="checkbox"
                                value="<?= $task['id']?>">
                         <span class="checkbox__text"><?= htmlspecialchars($task['name']) ?></span>

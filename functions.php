@@ -131,15 +131,22 @@ function getFilterData($db, $projectID, $userID, $filterTask)
             if ($projectID) {
                 $sql = 'SELECT * FROM `tasks` WHERE project_id = ?';
                 $condition = $projectID;
-            } else {
-                $sql = 'SELECT * FROM `tasks` WHERE `user_id` = ?';
+            } elseif ($projectID === 0) {
+                $sql = 'SELECT * FROM `tasks` WHERE `user_id` = ? AND `project_id` IS NULL';
                 $condition = $userID;
-            }
-            break;
-        case 'today':
+            } else {
+                    $sql = 'SELECT * FROM `tasks` WHERE `user_id` = ?';
+                    $condition = $userID;
+                }
+                break;
+            case
+                'today':
             if ($projectID) {
                 $sql = 'SELECT * FROM `tasks` WHERE `deadline` BETWEEN "' . $today->format(DATA_FORMAT) . '" AND "' . $todayMidnight->format(DATA_FORMAT) . '" AND project_id = ?';
                 $condition = $projectID;
+            }  elseif ($projectID === 0) {
+                $sql = 'SELECT * FROM `tasks` WHERE `deadline` BETWEEN "' . $today->format(DATA_FORMAT) . '" AND "' . $todayMidnight->format(DATA_FORMAT) . '" AND user_id = ? AND `project_id` IS NULL';
+                $condition = $userID;
             } else {
                 $sql = 'SELECT * FROM `tasks` WHERE `deadline` BETWEEN "' . $today->format(DATA_FORMAT) . '" AND "' . $todayMidnight->format(DATA_FORMAT) . '" AND user_id = ?';
                 $condition = $userID;
@@ -149,6 +156,9 @@ function getFilterData($db, $projectID, $userID, $filterTask)
             if ($projectID) {
                 $sql = 'SELECT * FROM `tasks` WHERE `deadline` BETWEEN "' . $todayMidnight->format(DATA_FORMAT) . '" AND "' . $tomorrowMidnight->format(DATA_FORMAT) . '" AND project_id = ?';
                 $condition = $projectID;
+            } elseif ($projectID === 0) {
+                $sql = 'SELECT * FROM `tasks` WHERE `deadline` BETWEEN "' . $todayMidnight->format(DATA_FORMAT) . '" AND "' . $tomorrowMidnight->format(DATA_FORMAT) . '" AND user_id = ? AND `project_id` IS NULL';
+                $condition = $userID;
             } else {
                 $sql = 'SELECT * FROM `tasks` WHERE `deadline` BETWEEN "' . $todayMidnight->format(DATA_FORMAT) . '" AND "' . $tomorrowMidnight->format(DATA_FORMAT) . '" AND `user_id` = ?';
                 $condition = $userID;
@@ -158,148 +168,150 @@ function getFilterData($db, $projectID, $userID, $filterTask)
             if ($projectID) {
                 $sql = 'SELECT * FROM `tasks` WHERE (`deadline` < NOW() OR NOT `complete_date`) AND  project_id = ?';
                 $condition = $projectID;
-
-            } else {
+            }  elseif ($projectID === 0) {
+                $sql = 'SELECT * FROM `tasks` WHERE (`deadline` < NOW() OR NOT `complete_date`)  AND user_id = ? AND `project_id` IS NULL';
+                $condition = $userID;
+            }else {
                 $sql = 'SELECT * FROM `tasks` WHERE (`deadline` < NOW() OR NOT `complete_date`) AND `user_id` = ?';
                 $condition = $userID;
             }
             break;
     }
 
-    return getData($db, $sql, [$condition]);
-}
+            return getData($db, $sql, [$condition]);
+    }
 
-/**
- * Функция проверки наличия запрашиваемых данных в базе
- * @param mysqli $db ресурс базы данных
- * @param string $sql строка запроза
- * @param array $condition условие для подстановки запроса
- * @return integer возвращает количество записей в базе
- */
-function isEntriesExist($db, $sql, $condition)
-{
-    $resource = mysqli_stmt_get_result(executeQuery($db, $sql, $condition));
-    $result = mysqli_fetch_all($resource, MYSQLI_ASSOC);
+    /**
+     * Функция проверки наличия запрашиваемых данных в базе
+     * @param mysqli $db ресурс базы данных
+     * @param string $sql строка запроза
+     * @param array $condition условие для подстановки запроса
+     * @return integer возвращает количество записей в базе
+     */
+    function isEntriesExist($db, $sql, $condition)
+    {
+        $resource = mysqli_stmt_get_result(executeQuery($db, $sql, $condition));
+        $result = mysqli_fetch_all($resource, MYSQLI_ASSOC);
 
-    return $result['0']['COUNT(*)'];
-}
+        return $result['0']['COUNT(*)'];
+    }
 
-/**
- * Функция добавления новой задачи у активного пользователя
- * @param mysqli $db ресурс базы данных
- * @param array $formsData данные из формы
- * @param int $idProject задачи без проекта
- * @return mysqli_stmt результат добавления задачи в базу данных
- */
-function addNewTask($db, $formsData, $idProject)
-{
-    if ($idProject) {
-        if ($formsData['date']) {
-            $sql = 'INSERT INTO `tasks` (`name`,`create_date`,`complete_date`,`project_id`,`deadline`,`file`, `user_id` )
+    /**
+     * Функция добавления новой задачи у активного пользователя
+     * @param mysqli $db ресурс базы данных
+     * @param array $formsData данные из формы
+     * @param int $idProject задачи без проекта
+     * @return mysqli_stmt результат добавления задачи в базу данных
+     */
+    function addNewTask($db, $formsData, $idProject)
+    {
+        if ($idProject) {
+            if ($formsData['date']) {
+                $sql = 'INSERT INTO `tasks` (`name`,`create_date`,`complete_date`,`project_id`,`deadline`,`file`, `user_id` )
         VALUES (?, NOW(), NULL, ?, ?, ?, ?)';
-        } else {
-            $sql = 'INSERT INTO `tasks` (`name`,`create_date`,`complete_date`,`project_id`,`deadline`,`file`, `user_id` )
-        VALUES (?, NOW(), NULL, ?, NULL, ?, ?)';
-            unset($formsData['date']);
-        }
-    } else {
-        if ($formsData['date']) {
-            $sql = 'INSERT INTO `tasks` (`name`,`create_date`,`complete_date`,`project_id`,`deadline`,`file`, `user_id` )
-        VALUES (?, NOW(), NULL, NULL, ?, ?, ?)';
-        } else {
-            $sql = 'INSERT INTO `tasks` (`name`,`create_date`,`complete_date`,`project_id`,`deadline`,`file`, `user_id` )
-        VALUES (?, NOW(), NULL, NULL, NULL, ?, ?)';
-            unset($formsData['date']);
-        }
-        unset($formsData['project']);
-    }
-
-    return executeQuery($db, $sql, $formsData);
-}
-
-/**
- * Функция изменения статуса задачи
- * @param mysqli $db ресурс базы данных
- * @param integer $checkTask текущий статус задачи
- * @param integer $taskID идентификатор задачи
- * @return mysqli_stmt результат добавления задачи в базу данных
- */
-function setCompleteDate($db, $checkTask, $taskID)
-{
-    if ($checkTask) {
-        $sql = 'UPDATE `tasks` SET `complete_date` = NOW() WHERE `id` = ?';
-
-    } else {
-        $sql = 'UPDATE `tasks` SET `complete_date` = NULL WHERE `id` = ?';
-    }
-
-    return executeQuery($db, $sql, [$taskID]);
-}
-
-/**
- * Функция проверки id проекта
- * @param integer $id искомый идентификатор
- * @param array $projects массив проектов
- * @return boolean результат проверки
- */
-function isProjectExists($id, $projects)
-{
-    if ($id === 'all') {
-        return true;
-    }
-
-    $isProject = in_array($id, array_column($projects, 'id'));
-    return $isProject && $isProject !== -1 ? true : false;
-}
-
-/**
- * Функция валидации даты
- * @param string $date дата
- * @param string $format формат даты
- * @return boolean
- */
-function validateDate($date, $format = 'Y-m-d H:i')
-{
-    $receivedDate = DateTime::createFromFormat($format, $date);
-    return $receivedDate && $receivedDate->format($format) == $date;
-}
-
-/**
- * Функция входа пользователя
- * @param array $loginData данные для входа
- * @param mysqli $db соединение с базой данных
- * @return array Массив ошибок
- */
-function login($loginData, $db)
-{
-    $getUser = 'SELECT * FROM `users` WHERE `email` = ?';
-
-    $errorsLogin = [];
-
-    if (empty($loginData['password'])) {
-        $errorsLogin['password'] = 'Это поле надо заполнить';
-    }
-
-    if (!isset($loginData['email'])) {
-        $errorsLogin['email'] = 'Это поле надо заполнить';
-    } elseif (!filter_var($loginData['email'], FILTER_VALIDATE_EMAIL)) {
-        $errorsLogin['email'] = 'Введите корректный E-mail';
-    }
-
-    if (!count($errorsLogin)) {
-        $user = getData($db, $getUser, [$loginData['email']]);
-        if ($user) {
-            if (password_verify($loginData['password'], $user[0]['password'])) {
-                $_SESSION['user'] = $user[0];
-                header("Location: /index.php");
-                exit();
             } else {
-                $errorsLogin['password'] = 'Неверный пароль';
+                $sql = 'INSERT INTO `tasks` (`name`,`create_date`,`complete_date`,`project_id`,`deadline`,`file`, `user_id` )
+        VALUES (?, NOW(), NULL, ?, NULL, ?, ?)';
+                unset($formsData['date']);
             }
         } else {
-            $errorsLogin['email'] = 'Пользователь с таким именем не найден';
+            if ($formsData['date']) {
+                $sql = 'INSERT INTO `tasks` (`name`,`create_date`,`complete_date`,`project_id`,`deadline`,`file`, `user_id` )
+        VALUES (?, NOW(), NULL, NULL, ?, ?, ?)';
+            } else {
+                $sql = 'INSERT INTO `tasks` (`name`,`create_date`,`complete_date`,`project_id`,`deadline`,`file`, `user_id` )
+        VALUES (?, NOW(), NULL, NULL, NULL, ?, ?)';
+                unset($formsData['date']);
+            }
+            unset($formsData['project']);
         }
+
+        return executeQuery($db, $sql, $formsData);
     }
 
-    return $errorsLogin;
-}
+    /**
+     * Функция изменения статуса задачи
+     * @param mysqli $db ресурс базы данных
+     * @param integer $checkTask текущий статус задачи
+     * @param integer $taskID идентификатор задачи
+     * @return mysqli_stmt результат добавления задачи в базу данных
+     */
+    function setCompleteDate($db, $checkTask, $taskID)
+    {
+        if ($checkTask) {
+            $sql = 'UPDATE `tasks` SET `complete_date` = NOW() WHERE `id` = ?';
+
+        } else {
+            $sql = 'UPDATE `tasks` SET `complete_date` = NULL WHERE `id` = ?';
+        }
+
+        return executeQuery($db, $sql, [$taskID]);
+    }
+
+    /**
+     * Функция проверки id проекта
+     * @param integer $id искомый идентификатор
+     * @param array $projects массив проектов
+     * @return boolean результат проверки
+     */
+    function isProjectExists($id, $projects)
+    {
+        if ($id === 'all') {
+            return true;
+        }
+
+        $isProject = in_array($id, array_column($projects, 'id'));
+        return $isProject && $isProject !== -1 ? true : false;
+    }
+
+    /**
+     * Функция валидации даты
+     * @param string $date дата
+     * @param string $format формат даты
+     * @return boolean
+     */
+    function validateDate($date, $format = 'Y-m-d H:i')
+    {
+        $receivedDate = DateTime::createFromFormat($format, $date);
+        return $receivedDate && $receivedDate->format($format) == $date;
+    }
+
+    /**
+     * Функция входа пользователя
+     * @param array $loginData данные для входа
+     * @param mysqli $db соединение с базой данных
+     * @return array Массив ошибок
+     */
+    function login($loginData, $db)
+    {
+        $getUser = 'SELECT * FROM `users` WHERE `email` = ?';
+
+        $errorsLogin = [];
+
+        if (empty($loginData['password'])) {
+            $errorsLogin['password'] = 'Это поле надо заполнить';
+        }
+
+        if (!isset($loginData['email'])) {
+            $errorsLogin['email'] = 'Это поле надо заполнить';
+        } elseif (!filter_var($loginData['email'], FILTER_VALIDATE_EMAIL)) {
+            $errorsLogin['email'] = 'Введите корректный E-mail';
+        }
+
+        if (!count($errorsLogin)) {
+            $user = getData($db, $getUser, [$loginData['email']]);
+            if ($user) {
+                if (password_verify($loginData['password'], $user[0]['password'])) {
+                    $_SESSION['user'] = $user[0];
+                    header("Location: /index.php");
+                    exit();
+                } else {
+                    $errorsLogin['password'] = 'Неверный пароль';
+                }
+            } else {
+                $errorsLogin['email'] = 'Пользователь с таким именем не найден';
+            }
+        }
+
+        return $errorsLogin;
+    }
